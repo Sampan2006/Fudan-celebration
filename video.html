@@ -15,7 +15,7 @@
 
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
             margin-top: 2rem;
         }
@@ -26,6 +26,7 @@
             overflow: hidden;
             box-shadow: var(--card-shadow);
             transition: transform var(--transition-speed);
+            min-width: 500px;
         }
 
         .video-card:hover {
@@ -249,6 +250,45 @@
             color: var(--fudan-red);
         }
 
+        /* 视频来源样式 */
+        .video-source {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .video-source a {
+            color: var(--fudan-blue);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .video-source a:hover {
+            color: var(--fudan-red);
+            text-decoration: underline;
+        }
+
+        .copyright-notice {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid var(--fudan-blue);
+            margin: 3rem auto 1rem;
+            max-width: 800px;
+        }
+
+        .copyright-notice p {
+            margin: 0;
+            line-height: 1.8;
+            color: #333;
+            font-size: 1rem;
+        }
+
+        .copyright-notice strong {
+            color: var(--fudan-blue);
+        }
+
         /* 返回按钮样式 */
         .back-to-directory {
             position: fixed;
@@ -306,40 +346,30 @@
 
     <div class="container">
         <div class="video-container">
-            <h1>校史影像</h1>
+            <h2>校史影像</h2>
             <div class="video-grid">
+                <!-- 复旦大学校史视频 -->
                 <div class="video-card">
                     <div class="video-wrapper">
-                        <video id="video1" poster="assets/images/video-thumbnail-1.jpg">
-                            <source src="assets/videos/fudan-history.mp4" type="video/mp4">
-                            您的浏览器不支持视频播放。
+                        <video id="historyVideo">
+                            <source src="assets/videos/history/history_introduction.mp4" type="video/mp4">
+                            您的浏览器不支持 HTML5 视频。
                         </video>
                         <div class="video-controls-wrapper">
                             <div class="video-controls-group">
                                 <button class="video-play-btn">
                                     <i class="fas fa-play"></i>
                                 </button>
+                                <div class="video-time">0:00 / 0:00</div>
                             </div>
                             <div class="video-progress">
                                 <div class="video-progress-bar"></div>
                             </div>
                             <div class="video-controls-group">
-                                <div class="video-time">00:00 / 00:00</div>
                                 <button class="video-volume-btn">
                                     <i class="fas fa-volume-up"></i>
                                 </button>
-                                <input type="range" class="video-volume-control" min="0" max="100" value="100">
-                                <button class="video-speed-btn">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <div class="speed-menu">
-                                        <div class="speed-option" data-speed="0.5">0.5x</div>
-                                        <div class="speed-option" data-speed="0.75">0.75x</div>
-                                        <div class="speed-option active" data-speed="1">1x</div>
-                                        <div class="speed-option" data-speed="1.25">1.25x</div>
-                                        <div class="speed-option" data-speed="1.5">1.5x</div>
-                                        <div class="speed-option" data-speed="2">2x</div>
-                                    </div>
-                                </button>
+                                <input type="range" class="video-volume-control" min="0" max="1" step="0.1" value="1">
                                 <button class="video-fullscreen-btn">
                                     <i class="fas fa-expand"></i>
                                 </button>
@@ -349,41 +379,34 @@
                     <div class="video-info">
                         <h3>复旦大学校史</h3>
                         <p>讲述复旦大学从1905年创立至今的发展历程</p>
+                        <p class="video-source">
+                            <small>视频来源：<a href="https://b23.tv/m2aCNz3" target="_blank" rel="noopener noreferrer">BiliBili - 复旦大学官方账号</a></small>
+                        </p>
                     </div>
                 </div>
-                
+
+                <!-- 光华校园视频 -->
                 <div class="video-card">
                     <div class="video-wrapper">
-                        <video id="video2" poster="assets/images/video-thumbnail-2.jpg">
-                            <source src="assets/videos/fudan-campus.mp4" type="video/mp4">
-                            您的浏览器不支持视频播放。
+                        <video id="campusVideo">
+                            <source src="assets/videos/history/guanghua_school_life.mp4" type="video/mp4">
+                            您的浏览器不支持 HTML5 视频。
                         </video>
                         <div class="video-controls-wrapper">
                             <div class="video-controls-group">
                                 <button class="video-play-btn">
                                     <i class="fas fa-play"></i>
                                 </button>
+                                <div class="video-time">0:00 / 0:00</div>
                             </div>
                             <div class="video-progress">
                                 <div class="video-progress-bar"></div>
                             </div>
                             <div class="video-controls-group">
-                                <div class="video-time">00:00 / 00:00</div>
                                 <button class="video-volume-btn">
                                     <i class="fas fa-volume-up"></i>
                                 </button>
-                                <input type="range" class="video-volume-control" min="0" max="100" value="100">
-                                <button class="video-speed-btn">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                    <div class="speed-menu">
-                                        <div class="speed-option" data-speed="0.5">0.5x</div>
-                                        <div class="speed-option" data-speed="0.75">0.75x</div>
-                                        <div class="speed-option active" data-speed="1">1x</div>
-                                        <div class="speed-option" data-speed="1.25">1.25x</div>
-                                        <div class="speed-option" data-speed="1.5">1.5x</div>
-                                        <div class="speed-option" data-speed="2">2x</div>
-                                    </div>
-                                </button>
+                                <input type="range" class="video-volume-control" min="0" max="1" step="0.1" value="1">
                                 <button class="video-fullscreen-btn">
                                     <i class="fas fa-expand"></i>
                                 </button>
@@ -393,7 +416,19 @@
                     <div class="video-info">
                         <h3>光华校园</h3>
                         <p>展现复旦大学标志性建筑与校园风光</p>
+                        <p class="video-source">
+                            <small>视频来源：<a href="https://b23.tv/wFv2rRW" target="_blank" rel="noopener noreferrer">BiliBili - UP主：旅拍者园子</a></small>
+                        </p>
                     </div>
+                </div>
+
+                <!-- 添加版权声明 -->
+                <div class="copyright-notice" style="grid-column: 1 / -1; text-align: center;">
+                    <p>
+                        <strong>版权声明：</strong><br>
+                        注：以上视频均来自BiliBili，仅用于教育目的。如有侵权，请联系我们删除。<br>
+                        商业转载须经过账号"复旦大学"和账号"旅拍者园子"同意。
+                    </p>
                 </div>
             </div>
         </div>
@@ -426,6 +461,9 @@
         // 点击音效
         const clickSound = new Audio('assets/audio/click.mp3');
 
+        // 当前正在播放的视频
+        let currentPlayingVideo = null;
+
         // 格式化时间
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
@@ -433,171 +471,118 @@
             return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        // 为每个视频添加控制功能
-        document.querySelectorAll('.video-wrapper').forEach(wrapper => {
-            const video = wrapper.querySelector('video');
-            const playBtn = wrapper.querySelector('.video-play-btn');
-            const progress = wrapper.querySelector('.video-progress');
-            const progressBar = wrapper.querySelector('.video-progress-bar');
-            const timeDisplay = wrapper.querySelector('.video-time');
-            const volumeBtn = wrapper.querySelector('.video-volume-btn');
-            const volumeControl = wrapper.querySelector('.video-volume-control');
-            const speedBtn = wrapper.querySelector('.video-speed-btn');
-            const speedMenu = wrapper.querySelector('.speed-menu');
-            const speedOptions = wrapper.querySelectorAll('.speed-option');
-            const fullscreenBtn = wrapper.querySelector('.video-fullscreen-btn');
+        // 暂停所有视频，除了指定的视频
+        function pauseAllVideosExcept(exceptVideo) {
+            document.querySelectorAll('.video-card video').forEach(video => {
+                if (video !== exceptVideo && !video.paused) {
+                    video.pause();
+                    // 更新对应的播放按钮图标
+                    const playBtn = video.closest('.video-wrapper').querySelector('.video-play-btn');
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+        }
+
+        // 为每个视频初始化控制功能
+        document.querySelectorAll('.video-card').forEach(card => {
+            const video = card.querySelector('video');
+            const playBtn = card.querySelector('.video-play-btn');
+            const volumeBtn = card.querySelector('.video-volume-btn');
+            const fullscreenBtn = card.querySelector('.video-fullscreen-btn');
+            const progress = card.querySelector('.video-progress');
+            const progressBar = card.querySelector('.video-progress-bar');
+            const volumeControl = card.querySelector('.video-volume-control');
+            const timeDisplay = card.querySelector('.video-time');
 
             // 播放/暂停控制
             playBtn.addEventListener('click', () => {
                 if (video.paused) {
+                    // 在播放前暂停其他视频
+                    pauseAllVideosExcept(video);
                     video.play();
                     playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    currentPlayingVideo = video;
                 } else {
                     video.pause();
                     playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    currentPlayingVideo = null;
                 }
-                clickSound.play();
             });
 
-            // 进度条更新
-            video.addEventListener('timeupdate', () => {
-                const percent = (video.currentTime / video.duration) * 100;
-                progressBar.style.width = `${percent}%`;
-                timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
-            });
-
-            // 进度条点击
-            progress.addEventListener('click', (e) => {
-                const rect = progress.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                video.currentTime = percent * video.duration;
+            // 点击视频本身也可以控制播放/暂停
+            video.addEventListener('click', () => {
+                if (video.paused) {
+                    pauseAllVideosExcept(video);
+                    video.play();
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    currentPlayingVideo = video;
+                } else {
+                    video.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    currentPlayingVideo = null;
+                }
             });
 
             // 音量控制
-            volumeControl.addEventListener('input', (e) => {
-                video.volume = e.target.value / 100;
-                updateVolumeIcon(video.volume, volumeBtn);
+            volumeControl.addEventListener('input', () => {
+                video.volume = volumeControl.value;
+                updateVolumeIcon();
             });
 
-            // 静音控制
             volumeBtn.addEventListener('click', () => {
-                video.muted = !video.muted;
                 if (video.muted) {
-                    volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                    video.muted = false;
+                    volumeControl.value = video.volume;
+                } else {
+                    video.muted = true;
                     volumeControl.value = 0;
-                } else {
-                    updateVolumeIcon(video.volume, volumeBtn);
-                    volumeControl.value = video.volume * 100;
                 }
-                clickSound.play();
-            });
-
-            // 更新音量图标
-            function updateVolumeIcon(volume, btn) {
-                if (volume === 0) {
-                    btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                } else if (volume < 0.5) {
-                    btn.innerHTML = '<i class="fas fa-volume-down"></i>';
-                } else {
-                    btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                }
-            }
-
-            // 视频加载完成时更新时间显示
-            video.addEventListener('loadedmetadata', () => {
-                timeDisplay.textContent = `00:00 / ${formatTime(video.duration)}`;
-            });
-
-            // 视频结束时重置播放按钮
-            video.addEventListener('ended', () => {
-                playBtn.innerHTML = '<i class="fas fa-play"></i>';
-            });
-
-            // 播放速度控制
-            speedBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                speedMenu.classList.toggle('active');
-            });
-
-            // 点击其他地方关闭速度菜单
-            document.addEventListener('click', () => {
-                speedMenu.classList.remove('active');
-            });
-
-            speedOptions.forEach(option => {
-                option.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const speed = parseFloat(option.dataset.speed);
-                    video.playbackRate = speed;
-                    speedOptions.forEach(opt => opt.classList.remove('active'));
-                    option.classList.add('active');
-                    speedMenu.classList.remove('active');
-                });
+                updateVolumeIcon();
             });
 
             // 全屏控制
             fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    wrapper.requestFullscreen().catch(err => {
-                        console.log(`全屏请求失败: ${err.message}`);
-                    });
-                    fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-                } else {
+                if (document.fullscreenElement) {
                     document.exitFullscreen();
-                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-                }
-                clickSound.play();
-            });
-
-            // 监听全屏变化
-            document.addEventListener('fullscreenchange', () => {
-                if (!document.fullscreenElement) {
-                    fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+                } else {
+                    card.querySelector('.video-wrapper').requestFullscreen();
                 }
             });
 
-            // 键盘快捷键控制
-            document.addEventListener('keydown', (e) => {
-                if (document.activeElement.tagName === 'INPUT') return;
-                
-                switch(e.key.toLowerCase()) {
-                    case ' ':
-                    case 'k':
-                        e.preventDefault();
-                        if (video.paused) {
-                            video.play();
-                            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                        } else {
-                            video.pause();
-                            playBtn.innerHTML = '<i class="fas fa-play"></i>';
-                        }
-                        break;
-                    case 'f':
-                        fullscreenBtn.click();
-                        break;
-                    case 'm':
-                        volumeBtn.click();
-                        break;
-                    case 'arrowleft':
-                        video.currentTime = Math.max(video.currentTime - 5, 0);
-                        break;
-                    case 'arrowright':
-                        video.currentTime = Math.min(video.currentTime + 5, video.duration);
-                        break;
-                    case 'arrowup':
-                        e.preventDefault();
-                        video.volume = Math.min(video.volume + 0.1, 1);
-                        volumeControl.value = video.volume * 100;
-                        updateVolumeIcon(video.volume, volumeBtn);
-                        break;
-                    case 'arrowdown':
-                        e.preventDefault();
-                        video.volume = Math.max(video.volume - 0.1, 0);
-                        volumeControl.value = video.volume * 100;
-                        updateVolumeIcon(video.volume, volumeBtn);
-                        break;
-                }
+            // 进度条控制
+            progress.addEventListener('click', (e) => {
+                const pos = (e.pageX - progress.offsetLeft) / progress.offsetWidth;
+                video.currentTime = pos * video.duration;
             });
+
+            // 更新进度条和时间显示
+            video.addEventListener('timeupdate', () => {
+                const pos = video.currentTime / video.duration;
+                progressBar.style.width = `${pos * 100}%`;
+                timeDisplay.textContent = `${formatTime(video.currentTime)} / ${formatTime(video.duration)}`;
+            });
+
+            // 视频结束时重置状态
+            video.addEventListener('ended', () => {
+                playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                currentPlayingVideo = null;
+            });
+
+            // 更新音量图标
+            function updateVolumeIcon() {
+                const volume = video.volume;
+                let icon = 'fa-volume-up';
+                if (video.muted || volume === 0) {
+                    icon = 'fa-volume-mute';
+                } else if (volume < 0.5) {
+                    icon = 'fa-volume-down';
+                }
+                volumeBtn.innerHTML = `<i class="fas ${icon}"></i>`;
+            }
+
+            // 初始化音量控制
+            video.volume = volumeControl.value;
+            updateVolumeIcon();
         });
 
         // 背景音乐开关
