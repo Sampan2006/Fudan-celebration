@@ -658,6 +658,125 @@ function initTouchControls() {
     });
 }
 
+// 初始化问答系统
+function initQuizSystem() {
+    this.quizSystem = {
+        questions: [
+            {
+                question: "复旦校训是什么？",
+                options: ["博学而笃志", "自强不息", "厚德载物"],
+                answer: 0
+            },
+            {
+                question: "光华楼建成时间？",
+                options: ["2005", "2010", "2015"],
+                answer: 0
+            },
+            {
+                question: "复旦大学创建于哪一年？",
+                options: ["1905", "1911", "1925"],
+                answer: 0
+            }
+        ],
+        currentQuestion: null,
+        correctAnswers: 0,
+        totalAnswered: 0,
+        
+        showQuestion: () => {
+            if (!this.quizSystem.currentQuestion) {
+                const randomIndex = Math.floor(Math.random() * this.quizSystem.questions.length);
+                this.quizSystem.currentQuestion = this.quizSystem.questions[randomIndex];
+            }
+            
+            // 创建问题界面
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'quiz-container';
+            questionContainer.innerHTML = `
+                <div class="quiz-content">
+                    <h3>${this.quizSystem.currentQuestion.question}</h3>
+                    <div class="quiz-options">
+                        ${this.quizSystem.currentQuestion.options.map((option, index) => `
+                            <button class="quiz-option" data-index="${index}">${option}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            // 添加到游戏容器
+            document.getElementById('gameContainer').appendChild(questionContainer);
+            
+            // 添加选项点击事件
+            questionContainer.querySelectorAll('.quiz-option').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const selectedIndex = parseInt(e.target.dataset.index);
+                    this.quizSystem.checkAnswer(selectedIndex);
+                    questionContainer.remove();
+                });
+            });
+        },
+        
+        checkAnswer: (selectedIndex) => {
+            const correct = selectedIndex === this.quizSystem.currentQuestion.answer;
+            this.quizSystem.totalAnswered++;
+            
+            if (correct) {
+                this.quizSystem.correctAnswers++;
+                // 正确答案奖励
+                this.addReward();
+            }
+            
+            // 显示结果
+            this.showAnswerResult(correct);
+            
+            // 重置当前问题
+            this.quizSystem.currentQuestion = null;
+        }
+    };
+    
+    // 每隔一定时间触发问答
+    this.time.addEvent({
+        delay: 30000, // 30秒
+        callback: () => {
+            if (!this.gameOver && !this.quizSystem.currentQuestion) {
+                this.quizSystem.showQuestion();
+            }
+        },
+        loop: true
+    });
+}
+
+// 显示答题结果
+function showAnswerResult(correct) {
+    const resultContainer = document.createElement('div');
+    resultContainer.className = `quiz-result ${correct ? 'correct' : 'incorrect'}`;
+    resultContainer.innerHTML = `
+        <div class="result-content">
+            <h3>${correct ? '回答正确！' : '回答错误'}</h3>
+            <p>${correct ? '获得特殊能力加成！' : '继续努力！'}</p>
+        </div>
+    `;
+    
+    document.getElementById('gameContainer').appendChild(resultContainer);
+    
+    // 3秒后移除结果显示
+    setTimeout(() => {
+        resultContainer.remove();
+    }, 3000);
+}
+
+// 添加奖励
+function addReward() {
+    // 根据角色类型给予不同奖励
+    const character = localStorage.getItem('selectedCharacter');
+    if (character === 'student') {
+        // 学生角色获得临时无敌
+        this.player.setInvincible(5000); // 5秒无敌
+    } else if (character === 'cat') {
+        // 猫咪角色获得额外跳跃力
+        this.player.setJumpBoost(1.5, 5000); // 1.5倍跳跃力，持续5秒
+    }
+}
+
 // 初始化游戏
 let game = new Phaser.Game(gameConfig);
 
