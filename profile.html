@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人主页 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--fudan-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-identity {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            color: var(--fudan-red);
+            font-weight: bold;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .profile-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-tab {
+            padding: 1rem 2rem;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+            box-shadow: var(--card-shadow);
+        }
+
+        .profile-tab.active {
+            background: var(--fudan-red);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .wish-card {
+            border-bottom: 1px solid #eee;
+            padding: 1rem 0;
+        }
+
+        .wish-card:last-child {
+            border-bottom: none;
+        }
+
+        .wish-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .wish-time {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .wish-content {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .wish-footer {
+            display: flex;
+            gap: 1rem;
+            color: #666;
+        }
+
+        .wish-action {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-progress {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .progress-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .progress-title {
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--fudan-red);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="wishes.html"><i class="fas fa-comment"></i> 祝福墙</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
+        </div>
+    </nav>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h1 class="profile-name">加载中...</h1>
+                <div class="profile-identity">身份：加载中...</div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="wishesCount">0</div>
+                        <div class="stat-label">祝福</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="likesCount">0</div>
+                        <div class="stat-label">获赞</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="points">0</div>
+                        <div class="stat-label">积分</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="loginStreak">0</div>
+                        <div class="stat-label">连续登录</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-tabs">
+            <div class="profile-tab active" data-tab="my-wishes">我的祝福</div>
+            <div class="profile-tab" data-tab="liked-wishes">点赞历史</div>
+            <div class="profile-tab" data-tab="game-progress">游戏进度</div>
+        </div>
+
+        <div class="tab-content active" id="my-wishes">
+            <!-- 我的祝福内容将通过JavaScript动态加载 -->
+        </div>
+
+        <div class="tab-content" id="liked-wishes">
+            <!-- 点赞历史内容将通过JavaScript动态加载 -->
+        </div>
+
+        <div class="tab-content" id="game-progress">
+            <!-- 游戏进度内容将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <script>
+        // API基础URL
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // 加载用户信息
+        async function loadUserProfile() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/profile`);
+                
+                if (!response.ok) {
+                    throw new Error('获取用户信息失败');
+                }
+                
+                const data = await response.json();
+                
+                // 更新用户信息
+                document.querySelector('.profile-name').textContent = data.name || '访客';
+                document.querySelector('.profile-identity').textContent = '身份：访客';
+                document.getElementById('points').textContent = data.points || 0;
+                document.getElementById('loginStreak').textContent = data.login_streak || 0;
+                
+                // 加载统计数据
+                loadStatistics();
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // 加载统计数据
+        async function loadStatistics() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/statistics`);
+                
+                if (!response.ok) {
+                    throw new Error('获取统计数据失败');
+                }
+                
+                const data = await response.json();
+                
+                document.getElementById('wishesCount').textContent = data.wishes_count;
+                document.getElementById('likesCount').textContent = data.likes_received;
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 加载我的祝福
+        async function loadMyWishes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/wishes`);
+                
+                if (!response.ok) {
+                    throw new Error('获取祝福列表失败');
+                }
+                
+                const wishes = await response.json();
+                const container = document.getElementById('my-wishes');
+                
+                if (wishes.length === 0) {
+                    container.innerHTML = '<div class="empty-message">还没有发布过祝福哦~</div>';
+                    return;
+                }
+                
+                container.innerHTML = wishes.map(wish => `
+                    <div class="wish-card">
+                        <div class="wish-header">
+                            <div class="wish-tag">${wish.tag}</div>
+                            <div class="wish-time">${new Date(wish.created_at).toLocaleString()}</div>
+                        </div>
+                        <div class="wish-content">${wish.content}</div>
+                        <div class="wish-footer">
+                            <div class="wish-action">
+                                <i class="fas fa-heart"></i>
+                                <span>${wish.likes}</span>
+                            </div>
+                            <div class="wish-action">
+                                <i class="fas fa-comment"></i>
+                                <span>${wish.comments}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('加载祝福失败:', error);
+            }
+        }
+
+        // 加载点赞历史
+        async function loadLikedWishes() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/liked-wishes`);
+                
+                if (!response.ok) {
+                    throw new Error('获取点赞历史失败');
+                }
+                
+                const wishes = await response.json();
+                const container = document.getElementById('liked-wishes');
+                
+                if (wishes.length === 0) {
+                    container.innerHTML = '<div class="empty-message">还没有点赞过祝福哦~</div>';
+                    return;
+                }
+                
+                container.innerHTML = wishes.map(wish => `
+                    <div class="wish-card">
+                        <div class="wish-header">
+                            <div class="wish-author">${wish.author_name}</div>
+                            <div class="wish-time">${new Date(wish.created_at).toLocaleString()}</div>
+                        </div>
+                        <div class="wish-content">${wish.content}</div>
+                        <div class="wish-footer">
+                            <div class="wish-action">
+                                <i class="fas fa-heart"></i>
+                                <span>${wish.likes}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('加载点赞历史失败:', error);
+            }
+        }
+
+        // 加载游戏进度
+        async function loadGameProgress() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/user/game-progress`);
+                
+                if (!response.ok) {
+                    throw new Error('获取游戏进度失败');
+                }
+                
+                const progress = await response.json();
+                const container = document.getElementById('game-progress');
+                
+                container.innerHTML = `
+                    <div class="progress-card">
+                        <h3 class="progress-title">知识问答</h3>
+                        <div>最高分数：${progress.quiz.highest_score}</div>
+                        <div>当前关卡：${progress.quiz.current_level}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(progress.quiz.current_level / progress.quiz.total_levels) * 100}%"></div>
+                        </div>
+                    </div>
+                    <div class="progress-card">
+                        <h3 class="progress-title">寻宝游戏</h3>
+                        <div>完成任务：${progress.treasure.completed_tasks}/${progress.treasure.total_tasks}</div>
+                        <div>获得积分：${progress.treasure.points}</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${(progress.treasure.completed_tasks / progress.treasure.total_tasks) * 100}%"></div>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('加载游戏进度失败:', error);
+            }
+        }
+
+        // 切换标签页
+        document.querySelectorAll('.profile-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 切换标签样式
+                document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // 切换内容显示
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tab.dataset.tab).classList.add('active');
+                
+                // 加载对应内容
+                switch (tab.dataset.tab) {
+                    case 'my-wishes':
+                        loadMyWishes();
+                        break;
+                    case 'liked-wishes':
+                        loadLikedWishes();
+                        break;
+                    case 'game-progress':
+                        loadGameProgress();
+                        break;
+                }
+            });
+        });
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadMyWishes();
+        });
+    </script>
+</body>
+</html>

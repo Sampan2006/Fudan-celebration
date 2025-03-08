@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>趣味游戏 - 复旦120周年</title>
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-blue: #1a237e;
+            --fudan-red: #b71c1c;
+            --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-navbar {
+            background-color: var(--fudan-red);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+            background: var(--fudan-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .game-title {
+            color: var(--fudan-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .game-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .play-btn {
+            background: var(--fudan-red);
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .play-btn:hover {
+            background: var(--fudan-blue);
+        }
+
+        .back-to-dir {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--fudan-red);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* 动态背景特效 */
+        .dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            opacity: 0.1;
+            animation: bg-pulse 20s infinite;
+        }
+
+        @keyframes bg-pulse {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.15; }
+            100% { opacity: 0.1; }
+        }
+
+        .games-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .games-title {
+            text-align: center;
+            color: var(--fudan-blue);
+            margin-bottom: 2rem;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(45deg, var(--fudan-red), var(--fudan-blue));
+            position: relative;
+        }
+
+        .game-content {
+            padding: 1.5rem;
+        }
+
+        .game-title {
+            color: var(--fudan-blue);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .game-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .play-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--fudan-red);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-btn:hover {
+            background: var(--fudan-blue);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .games-container {
+                padding: 15px;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 50px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-background"></div>
+    
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">复旦120周年</a>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="directory.html">内容目录</a>
+            <a href="games.html">趣味游戏</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-icon">📚</div>
+                <h2 class="game-title">校史问答</h2>
+                <p class="game-description">
+                    挑战复旦校史知识，赢取积分和成就！
+                    每日挑战、实时对战，让学习校史变得更有趣。
+                </p>
+                <a href="quiz.html" class="play-btn">开始答题</a>
+            </div>
+
+            <div class="game-card">
+                <div class="game-icon">🏃</div>
+                <h2 class="game-title">光华攀登</h2>
+                <p class="game-description">
+                    控制角色攀登光华楼，收集校徽获得加分。
+                    小心障碍物，答对问题获得特殊能力！
+                </p>
+                <a href="climbing.html" class="play-btn">开始游戏</a>
+            </div>
+        </div>
+    </div>
+
+    <a href="directory.html" class="back-to-dir">返回目录</a>
+
+    <script>
+        // 从localStorage获取游戏进度
+        function getGameProgress() {
+            const quizProgress = JSON.parse(localStorage.getItem('quizProgress')) || { level: 1, score: 0 };
+            const climbingProgress = JSON.parse(localStorage.getItem('climbingProgress')) || { highestFloor: 0 };
+
+            // 更新攀登游戏的最高层数
+            const highestFloorEl = document.getElementById('highestFloor');
+            if (highestFloorEl) {
+                highestFloorEl.textContent = climbingProgress.highestFloor;
+            }
+
+            // 更新问答游戏的等级
+            const quizStat = document.getElementById('quiz-stats');
+            if (quizStat) {
+                quizStat.innerHTML = `<i class="fas fa-star"></i> 当前等级 ${quizProgress.level}`;
+            }
+        }
+
+        // 添加游戏卡片点击事件监听
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const url = this.querySelector('.play-btn').getAttribute('href');
+                if (url) window.location.href = url;
+            });
+        });
+
+        // 页面加载时初始化
+        window.addEventListener('load', getGameProgress);
+    </script>
+</body>
+</html> 

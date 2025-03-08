@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复旦大学 - 3D历史时间轴</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* 综合布局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0; /* 修改：移除为导航栏预留的空间 */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 修改：完全移除导航条 */
+        .top-navbar {
+            display: none !important; /* 完全隐藏导航栏 */
+        }
+        
+        /* 移除这些不必要的样式，因为导航栏已经被隐藏 */
+        /*
+        .top-navbar a {
+            color: var(--fudan-blue);
+        }
+        
+        .top-navbar .site-logo {
+            color: var(--fudan-red);
+        }
+        */
+        
+        /* 添加：确保导航栏不占用空间 */
+        nav {
+            height: 0 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* 修改返回按钮的样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* 改为左上角 */
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+
+        #container {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 中央图片显示区域 */
+        .central-media {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%;
+            height: 60%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            z-index: 10;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 2px solid var(--fudan-red);
+        }
+
+        .central-media img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .info-panel {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30vh;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.95), rgba(255,255,255,0.98));
+            padding: 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 2;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .info-panel-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+        }
+
+        .info-header {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+        }
+
+        .info-body {
+            display: flex;
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .event-text {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .timeline-nav {
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .timeline-dots {
+            display: flex;
+            gap: 10px;
+        }
+
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-dot.active {
+            background: var(--fudan-red);
+            transform: scale(1.2);
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+
+        .control-btn {
+            padding: 8px 16px;
+            background: var(--fudan-red);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .control-btn:hover {
+            opacity: 0.8;
+        }
+
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            z-index: 1000;
+        }
+
+        .event-year {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--fudan-red);
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        .event-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--fudan-blue);
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+
+        .event-desc {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #333;
+            margin-top: 0;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .info-panel {
+                height: 40vh;
+            }
+            
+            #container {
+                height: 60vh;
+            }
+            
+            .control-btn {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .central-media {
+                width: 80%;
+                height: 40%;
+            }
+            
+            .info-header {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加返回目录按钮 -->
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
+        </div>
+    </nav>
+
+    <div id="loading">资源加载中，请稍候...</div>
+    <div id="container">
+        <!-- 中央图片显示区域 -->
+        <div id="centralMedia" class="central-media">
+            <!-- 图片将通过JavaScript动态加载 -->
+        </div>
+    </div>
+    
+    <div class="info-panel">
+        <div class="info-panel-content">
+            <div class="info-header">
+                <h2 id="eventYear" class="event-year">1905</h2>
+                <h3 id="eventTitle" class="event-title">复旦公学创立</h3>
+            </div>
+            <div class="info-body">
+                <div class="event-text">
+                    <p id="eventDescription" class="event-desc"></p>
+                </div>
+            </div>
+            <div class="timeline-nav">
+                <div class="timeline-dots">
+                    <!-- 时间线导航点将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button id="rotateLeft" class="control-btn"><i class="fas fa-arrow-left"></i> 上一个</button>
+        <button id="rotateRight" class="control-btn">下一个 <i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script src="js/three.min.js"></script>
+    <script src="js/tween.umd.js"></script>
+    <script>
+        // 配置参数
+        const CONFIG = {
+            pageWidth: 8,
+            pageHeight: 4.5,
+            pageSpacing: 12,
+            cameraZ: 18,
+            transitionDuration: 800
+        };
+
+        // 初始化Three.js核心
+        let scene, camera, renderer, pages = [];
+        let currentIndex = 0;
+        let eventsData = [];
+
+        // 场景初始化
+        function initThreeScene() {
+            // 创建场景
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf5f5f5);
+            
+            // 设置相机
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 5, CONFIG.cameraZ);
+            
+            // 初始化渲染器
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight * 0.7);
+            renderer.setClearColor(0xF5F5F5);
+            document.getElementById('container').appendChild(renderer.domElement);
+            
+            // 添加光源
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            directionalLight.position.set(5, 5, 5);
+            scene.add(ambientLight, directionalLight);
+        }
+
+        // 创建页面内容
+        async function createPageContent(eventData) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // 设置高清画布
+                const scale = 2;
+                canvas.width = 1600 * scale;
+                canvas.height = 900 * scale;
+                ctx.scale(scale, scale);
+                
+                // 绘制背景
+                const gradient = ctx.createLinearGradient(0, 0, 0, 900);
+                gradient.addColorStop(0, '#9e1f14'); // 复旦红色顶部
+                gradient.addColorStop(1, '#6b150e'); // 深红色底部
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 1600, 900);
+                
+                // 添加装饰元素
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.beginPath();
+                ctx.arc(1400, 200, 300, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 添加复旦校徽轮廓（简化版）
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.arc(1400, 200, 150, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // 绘制年份
+                ctx.fillStyle = 'white';
+                ctx.font = `bold 120px "Microsoft YaHei"`;
+                ctx.fillText(eventData.year, 100, 200);
+                
+                // 绘制标题
+                ctx.font = `bold 80px "Microsoft YaHei"`;
+                ctx.fillText(eventData.title, 100, 320);
+                
+                // 绘制摘要
+                ctx.font = `40px "Microsoft YaHei"`;
+                
+                // 处理长文本换行
+                const wrapText = (text, x, y, maxWidth, lineHeight) => {
+                    const words = text.split(' ');
+                    let line = '';
+                    let testLine = '';
+                    let lineCount = 0;
+                    
+                    for (let n = 0; n < words.length; n++) {
+                        testLine = line + words[n] + ' ';
+                        const metrics = ctx.measureText(testLine);
+                        const testWidth = metrics.width;
+                        
+                        if (testWidth > maxWidth && n > 0) {
+                            ctx.fillText(line, x, y + (lineCount * lineHeight));
+                            line = words[n] + ' ';
+                            lineCount++;
+                        } else {
+                            line = testLine;
+                        }
+                    }
+                    
+                    ctx.fillText(line, x, y + (lineCount * lineHeight));
+                    return lineCount;
+                };
+                
+                // 绘制摘要文本
+                wrapText(eventData.summary, 100, 400, 1400, 50);
+                
+                // 创建纹理
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.needsUpdate = true;
+                resolve(texture);
+            });
+        }
+
+        // 创建3D页面对象
+        async function create3DPages(events) {
+            try {
+                console.log('开始创建3D页面，事件数量:', events.length);
+                for (let i = 0; i < events.length; i++) {
+                    console.log(`处理第${i+1}个事件: ${events[i].year} - ${events[i].title}`);
+                    const texture = await createPageContent(events[i]);
+                    const material = new THREE.MeshPhongMaterial({ map: texture });
+                    const geometry = new THREE.PlaneGeometry(CONFIG.pageWidth, CONFIG.pageHeight);
+                    const page = new THREE.Mesh(geometry, material);
+                    
+                    page.position.x = i * CONFIG.pageSpacing;
+                    page.rotation.y = Math.PI/2;
+                    scene.add(page);
+                    pages.push(page);
+                }
+                console.log('3D页面创建完成，总页数:', pages.length);
+            } catch (error) {
+                console.error('创建3D页面失败:', error);
+                throw new Error('创建3D页面时出错: ' + error.message);
+            }
+        }
+
+        // 更新信息面板
+        function updateInfoPanel(eventData) {
+            document.getElementById('eventYear').textContent = eventData.year;
+            document.getElementById('eventTitle').textContent = eventData.title;
+            
+            // 更新详细描述
+            const descElement = document.getElementById('eventDescription');
+            descElement.innerHTML = eventData.detail || eventData.summary;
+            
+            // 添加媒体内容（如果有）
+            const mediaContainer = document.getElementById('centralMedia');
+            if (mediaContainer) {
+                mediaContainer.innerHTML = '';
+                
+                if (eventData.media && eventData.media.type === 'image') {
+                    const img = document.createElement('img');
+                    img.src = eventData.media.url;
+                    img.alt = eventData.media.alt || eventData.title;
+                    mediaContainer.appendChild(img);
+                } else {
+                    // 如果没有图片，显示默认图片或文字
+                    const defaultContent = document.createElement('div');
+                    defaultContent.style.width = '100%';
+                    defaultContent.style.height = '100%';
+                    defaultContent.style.display = 'flex';
+                    defaultContent.style.alignItems = 'center';
+                    defaultContent.style.justifyContent = 'center';
+                    defaultContent.style.fontSize = '24px';
+                    defaultContent.style.color = 'var(--fudan-red)';
+                    defaultContent.style.textAlign = 'center';
+                    defaultContent.innerHTML = `<div>
+                        <i class="fas fa-university" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <div>${eventData.year}</div>
+                        <div>${eventData.title}</div>
+                    </div>`;
+                    mediaContainer.appendChild(defaultContent);
+                }
+            }
+        }
+
+        // 初始化控制
+        function initControls() {
+            document.getElementById('rotateLeft').addEventListener('click', () => navigate(-1));
+            document.getElementById('rotateRight').addEventListener('click', () => navigate(1));
+            
+            // 添加键盘控制
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') navigate(-1);
+                if (e.key === 'ArrowRight') navigate(1);
+            });
+            
+            // 生成时间线导航点
+            createTimelineDots();
+        }
+        
+        // 生成时间线导航点
+        function createTimelineDots() {
+            const dotsContainer = document.querySelector('.timeline-dots');
+            dotsContainer.innerHTML = '';
+            
+            eventsData.forEach((event, index) => {
+                const dot = document.createElement('div');
+                dot.className = 'timeline-dot';
+                if (index === currentIndex) {
+                    dot.classList.add('active');
+                }
+                
+                // 添加提示文本
+                dot.title = `${event.year}: ${event.title}`;
+                
+                // 添加点击事件
+                dot.addEventListener('click', () => {
+                    if (index !== currentIndex) {
+                        navigateToIndex(index);
+                    }
+                });
+                
+                dotsContainer.appendChild(dot);
+            });
+        }
+        
+        // 导航到指定索引
+        function navigateToIndex(index) {
+            if (index < 0 || index >= pages.length) return;
+            
+            new TWEEN.Tween(camera.position)
+                .to({
+                    x: pages[index].position.x - CONFIG.pageSpacing/2,
+                    z: CONFIG.cameraZ
+                }, CONFIG.transitionDuration)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .start();
+            
+            // 更新当前索引和活动点
+            const dots = document.querySelectorAll('.timeline-dot');
+            dots[currentIndex].classList.remove('active');
+            dots[index].classList.add('active');
+            
+            currentIndex = index;
+            updateInfoPanel(eventsData[currentIndex]);
+        }
+        
+        // 修改原导航函数使用新的导航到索引函数
+        function navigate(direction) {
+            navigateToIndex(currentIndex + direction);
+        }
+
+        // 添加完整的内联数据
+        const TIMELINE_DATA = [
+            {
+                year: "1902",
+                title: "复旦公学创立",
+                summary: "马相伯先生创办复旦公学。",
+                detail: "1902年，马相伯先生创办复旦公学，这是复旦大学的前身。复旦之名取自《尚书大传》中\"日月光华，旦复旦兮\"的名句，寓意为光明日日更新。创办之初，学校设在上海吴淞，开设中文、英文、数学等课程。马相伯先生力主教育救国，希望通过兴办新式学堂，培养具有科学知识和爱国精神的人才，为中国的发展和进步贡献力量。",
+                media: {
+                    type: "image",
+                    url: "assets/images/1.png",
+                    alt: "复旦公学创立照片"
+                }
+            },
+            {
+                year: "1905",
+                title: "复旦公学迁至上海徐家汇",
+                summary: "学校发展的重要阶段。",
+                detail: "1905年，复旦公学从吴淞迁至上海徐家汇，这是学校发展的重要阶段。在徐家汇期间，学校进一步完善了教学体系，扩大了办学规模，为后来的发展奠定了基础。这一时期，复旦公学开始形成自己独特的教育理念和学术传统，吸引了更多有志青年前来求学。",
+                media: {
+                    type: "image",
+                    url: "assets/images/2.png",
+                    alt: "复旦公学徐家汇校址照片"
+                }
+            },
+            {
+                year: "1912",
+                title: "孙中山拨款复校",
+                summary: "孙中山先生拨款一万元帮助复旦复校，校址迁至徐家汇李鸿章公祠。",
+                detail: "1912年，中华民国临时大总统孙中山先生拨款一万元帮助复旦复校，这一举措对于复旦的发展具有重要意义。在此期间，复旦的校址迁至徐家汇李鸿章公祠，开始了新的发展阶段。孙中山先生对复旦的支持，体现了他对教育事业的重视，也为复旦的发展奠定了基础。",
+                media: {
+                    type: "image",
+                    url: "assets/images/3.png",
+                    alt: "孙中山与复旦相关照片"
+                }
+            },
+            {
+                year: "1919",
+                title: "复旦师生参与五四运动",
+                summary: "复旦学生积极参与爱国运动，邵力子敲响上海\"五四第一钟\"。",
+                detail: "1919年，五四运动爆发，复旦大学师生积极投身这场伟大的爱国运动。复旦校友邵力子敲响了上海\"五四第一钟\"，号召全市学生和市民参与到反帝爱国运动中来。复旦师生的积极参与，展现了他们的爱国热情和社会责任感，也使复旦在这场影响深远的社会运动中留下了重要的印记。",
+                media: {
+                    type: "image",
+                    url: "assets/images/4.png",
+                    alt: "五四运动相关照片"
+                }
+            },
+            {
+                year: "1920",
+                title: "陈望道翻译《共产党宣言》并任教复旦",
+                summary: "陈望道翻译并出版《共产党宣言》第一个中文全译本，年底来到复旦任教。",
+                detail: "1920年，陈望道先生翻译并出版了《共产党宣言》第一个中文全译本，这是马克思主义在中国传播的重要里程碑。同年年底，陈望道先生来到复旦大学任教，开始了他在复旦的教育生涯。陈望道先生的加入，为复旦带来了新的思想活力，也使复旦成为马克思主义在中国传播的重要阵地之一。",
+                media: {
+                    type: "image",
+                    url: "assets/images/5.png",
+                    alt: "陈望道与《共产党宣言》"
+                }
+            },
+            {
+                year: "1922",
+                title: "复旦大学部迁址江湾",
+                summary: "复旦大学部迁址江湾，中学部留徐家汇原址，称私立复旦大学附属中学。",
+                detail: "1922年，复旦大学部迁址江湾，开始了在新校址的发展历程。而中学部则留在徐家汇原址，更名为私立复旦大学附属中学。这次搬迁为复旦的发展提供了更广阔的空间，也标志着复旦进入了一个新的发展阶段。江湾校区后来成为复旦大学的主校区，见证了复旦几代人的成长与奋斗。",
+                media: {
+                    type: "image",
+                    url: "assets/images/6.png",
+                    alt: "江湾校区老照片"
+                }
+            },
+            {
+                year: "1927",
+                title: "国立第四中山大学医学院建立",
+                summary: "国立第四中山大学医学院在上海吴淞建立，为上海医科大学前身。",
+                detail: "1927年，国立第四中山大学医学院在上海吴淞建立，这是后来的上海医科大学的前身，也是现在复旦大学医学院的源头。该医学院的建立，填补了当时上海高等医学教育的空白，为培养中国自己的医学人才做出了重要贡献。多年后，这所医学院与复旦大学合并，成为新的复旦大学的重要组成部分。",
+                media: {
+                    type: "image",
+                    url: "assets/images/7.png",
+                    alt: "医学院成立照片"
+                }
+            },
+            {
+                year: "1937",
+                title: "抗日战争爆发，复旦大学西迁重庆北碚",
+                summary: "复旦人在国难中坚持办学。",
+                detail: "1937年抗日战争全面爆发后，复旦大学被迫离开上海，西迁至重庆北碚，与南开大学、浙江大学组成国立西南联合大学。在极其艰苦的条件下，复旦人依然坚持教学和科研工作，培养了一批又一批优秀人才。这段西迁办学的历史，是复旦大学爱国主义传统的重要体现，也是中国高等教育在民族危亡时刻不屈不挠的生动写照。",
+                media: {
+                    type: "image",
+                    url: "assets/images/8.png",
+                    alt: "复旦大学西迁照片"
+                }
+            },
+            {
+                year: "1938",
+                title: "复旦与大夏大学组成联合大学内迁",
+                summary: "复旦大学与大夏大学组成联合大学内迁，最终落脚北碚夏坝。",
+                detail: "1938年，为了集中教育资源，应对战时困难，复旦大学与大夏大学组成联合大学内迁，最终落脚重庆北碚夏坝。这一举措体现了中国知识分子在民族危亡之际的团结精神，也为复旦在抗战时期的教育工作提供了更好的条件。联合大学的经历，成为复旦历史上的重要篇章。",
+                media: {
+                    type: "image",
+                    url: "assets/images/9.png",
+                    alt: "联合大学内迁照片"
+                }
+            },
+            {
+                year: "1958",
+                title: "复旦参与原子弹研制技术",
+                summary: "复旦组成\"58中队\"参与原子弹研制技术。",
+                detail: "1958年，为了打破西方国家的核垄断，复旦大学组成了被称为\"58中队\"的科研团队，参与了中国第一颗原子弹的研制工作。复旦的科学家们克服了重重困难，为中国核武器的研发做出了重要贡献。这一事件体现了复旦人的爱国情怀和科学精神，也是复旦大学服务国家重大战略需求的典范。",
+                media: {
+                    type: "image",
+                    url: "assets/images/10.png",
+                    alt: "原子弹研制相关照片"
+                }
+            },
+            {
+                year: "1977",
+                title: "苏步青出任校长，复旦恢复招收本科生",
+                summary: "苏步青出任校长，复旦恢复招收本科生。",
+                detail: "1977年，著名数学家苏步青教授出任复旦大学校长，同年，随着高考制度的恢复，复旦大学也恢复了招收本科生。这标志着文化大革命对教育的破坏结束，复旦大学迎来了新的发展机遇。在苏步青校长的领导下，复旦大学逐步恢复和发展了各项教学科研工作，为改革开放初期的人才培养做出了重要贡献。",
+                media: {
+                    type: "image",
+                    url: "assets/images/11.png",
+                    alt: "苏步青与复旦照片"
+                }
+            },
+            {
+                year: "1981",
+                title: "复旦成为全国首批博士、硕士学位授予单位",
+                summary: "复旦成为全国首批博士、硕士学位授予单位。",
+                detail: "1981年，复旦大学成为全国首批博士、硕士学位授予单位，这标志着复旦大学研究生教育进入了一个新的阶段。作为中国高等教育的重要力量，复旦大学在这一时期开始大力发展研究生教育，培养了大批高层次专业人才，为中国的现代化建设提供了强有力的人才支持。",
+                media: {
+                    type: "image",
+                    url: "assets/images/12.png",
+                    alt: "学位授予相关照片"
+                }
+            },
+            {
+                year: "2000",
+                title: "复旦大学与上海医科大学合并",
+                summary: "两校合并，优势互补。",
+                detail: "2000年，复旦大学与上海医科大学正式合并，组建新的复旦大学。这次合并是中国高等教育体制改革的重要举措，也是复旦大学发展史上的重要里程碑。通过合并，复旦大学的学科结构更加完善，综合实力显著增强，特别是在医学教育和研究领域取得了长足进步。两校的优势互补，为复旦大学建设世界一流大学提供了新的动力和更广阔的发展空间。",
+                media: {
+                    type: "image",
+                    url: "assets/images/13.png",
+                    alt: "复旦大学与上海医科大学合并照片"
+                }
+            },
+            {
+                year: "2005",
+                title: "复旦大学建校百年庆典",
+                summary: "百年复旦，再创辉煌。",
+                detail: "2005年，复旦大学隆重举行建校百年庆典，回顾了百年来的办学历程和取得的辉煌成就。在庆典上，复旦大学提出了建设世界一流大学的宏伟目标，并得到了社会各界的广泛支持。百年校庆不仅是对过去的纪念，更是对未来的展望。在新的历史起点上，复旦大学继续秉承\"博学而笃志，切问而近思\"的校训，朝着建设世界一流大学的目标不断前进。",
+                media: {
+                    type: "image",
+                    url: "assets/images/14.png",
+                    alt: "复旦大学百年校庆照片"
+                }
+            },
+            {
+                year: "2008",
+                title: "复旦大学师生参与汶川地震救援",
+                summary: "复旦师生积极参与汶川地震救援和灾后重建，展现社会责任。",
+                detail: "2008年，四川汶川发生特大地震，复旦大学师生积极参与救援和灾后重建工作。复旦的医疗队第一时间奔赴灾区，为受灾群众提供医疗服务；复旦的志愿者们也积极参与到各种救援和重建活动中。这一事件展现了复旦人的社会责任感和人道主义精神，也是复旦大学服务社会的重要体现。",
+                media: {
+                    type: "image",
+                    url: "assets/images/15.png",
+                    alt: "汶川救援照片"
+                }
+            },
+            {
+                year: "2012",
+                title: "复旦大学加入环太平洋大学联盟（APRU）",
+                summary: "提升复旦在国际高等教育领域的影响力。",
+                detail: "2012年，复旦大学正式加入环太平洋大学联盟（APRU），这标志着复旦大学国际化进程的重要进展。环太平洋大学联盟是一个由环太平洋地区顶尖研究型大学组成的国际组织，复旦大学的加入，不仅提升了复旦在国际高等教育领域的影响力，也为复旦的师生提供了更多国际交流与合作的机会，促进了复旦大学的国际化发展。",
+                media: {
+                    type: "image",
+                    url: "assets/images/16.png",
+                    alt: "APRU相关照片"
+                }
+            },
+            {
+                year: "2015",
+                title: "复旦大学成立类脑智能科学与技术研究院",
+                summary: "推动人工智能和脑科学研究，引领未来科技发展。",
+                detail: "2015年，复旦大学成立了类脑智能科学与技术研究院，致力于推动人工智能和脑科学研究，引领未来科技发展。这一研究院的成立，标志着复旦大学在前沿科技领域的布局和投入，也体现了复旦大学服务国家创新驱动发展战略的决心。类脑智能研究是当今科学前沿的热点领域，复旦大学的这一举措，为中国在这一领域的研究做出了重要贡献。",
+                media: {
+                    type: "image",
+                    url: "assets/images/17.png",
+                    alt: "类脑研究院照片"
+                }
+            },
+            {
+                year: "2017",
+                title: "复旦大学启动\"双一流\"建设",
+                summary: "明确建设世界一流大学的目标。",
+                detail: "2017年，复旦大学正式启动\"双一流\"建设，即世界一流大学和一流学科建设。这是复旦大学发展史上的重要战略部署，也是复旦大学响应国家高等教育发展战略的具体行动。通过\"双一流\"建设，复旦大学进一步明确了建设世界一流大学的目标，并在学科建设、人才培养、科学研究等方面取得了显著进展，为复旦大学的长远发展奠定了坚实基础。",
+                media: {
+                    type: "image",
+                    url: "assets/images/18.png",
+                    alt: "双一流建设相关照片"
+                }
+            },
+            {
+                year: "2020",
+                title: "复旦大学附属医院医护人员驰援武汉抗击新冠疫情",
+                summary: "复旦人在国家危难时刻展现担当。",
+                detail: "2020年初，新冠肺炎疫情爆发，复旦大学附属医院的医护人员第一时间驰援武汉，投入到抗击疫情的最前线。复旦人用实际行动诠释了\"团结、服务、牺牲\"的复旦精神，展现了在国家危难时刻的责任与担当。复旦大学的医学专家们还积极参与疫情防控的科研攻关，为战胜疫情提供了科学支持。这一事件，是复旦大学服务国家、服务人民的生动体现。",
+                media: {
+                    type: "image",
+                    url: "assets/images/19.png",
+                    alt: "复旦医护人员抗疫照片"
+                }
+            },
+            {
+                year: "2023",
+                title: "复旦大学获批建设前沿科学中心",
+                summary: "复旦大学在基础研究领域的重要突破。",
+                detail: "2023年，复旦大学获批建设前沿科学中心，这是复旦大学在基础研究领域的重要突破。前沿科学中心致力于开展原创性、引领性的科学研究，探索自然规律和科学前沿。复旦大学依托自身在物理、化学、生命科学等领域的优势，积极推进前沿科学中心建设，为解决重大科学问题和培养拔尖创新人才提供了重要平台。",
+                media: {
+                    type: "image",
+                    url: "assets/images/20.png",
+                    alt: "复旦大学前沿科学中心照片"
+                }
+            },
+            {
+                year: "2024",
+                title: "复旦大学启动\"复旦2035\"发展战略",
+                summary: "复旦大学面向未来的重要规划。",
+                detail: "2024年，复旦大学正式启动\"复旦2035\"发展战略，这是复旦大学面向未来的重要规划。\"复旦2035\"发展战略明确了复旦大学未来十年的发展目标和路径，提出了建设世界一流大学的具体措施和时间表。通过实施这一战略，复旦大学将进一步提升教育质量和科研水平，增强国际影响力和竞争力，为中华民族伟大复兴和人类文明进步做出更大贡献。",
+                media: {
+                    type: "image",
+                    url: "assets/images/21.png",
+                    alt: "复旦2035发展战略照片"
+                }
+            }
+        ];
+
+        // 主初始化流程
+        async function init() {
+            console.log('初始化开始...');
+            try {
+                console.log('初始化Three.js场景...');
+                initThreeScene();
+                console.log('Three.js场景初始化完成');
+                
+                // 直接使用内联数据，不再使用fetch
+                console.log('使用内联数据...');
+                eventsData = TIMELINE_DATA;
+                console.log('成功加载数据:', eventsData.length, '条记录');
+                
+                console.log('开始创建3D页面...');
+                await create3DPages(eventsData);
+                console.log('3D页面创建完成');
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                console.log('初始化控制...');
+                initControls();
+                console.log('更新信息面板...');
+                updateInfoPanel(eventsData[0]);
+                console.log('启动动画循环...');
+                animate();
+                console.log('初始化完成!');
+            } catch (error) {
+                console.error('初始化失败:', error);
+                console.error('错误堆栈:', error.stack);
+                document.getElementById('loading').innerHTML = `
+                    <div>
+                        <p>初始化失败: ${error.message}</p>
+                        <p>请尝试刷新页面或检查浏览器控制台获取更多信息。</p>
+                    </div>
+                `;
+                
+                // 添加重试按钮
+                const retryBtn = document.createElement('button');
+                retryBtn.textContent = '重试加载';
+                retryBtn.style.marginTop = '20px';
+                retryBtn.style.padding = '10px 20px';
+                retryBtn.style.background = '#9e1f14';
+                retryBtn.style.color = 'white';
+                retryBtn.style.border = 'none';
+                retryBtn.style.borderRadius = '4px';
+                retryBtn.style.cursor = 'pointer';
+                retryBtn.onclick = init;
+                document.getElementById('loading').appendChild(retryBtn);
+            }
+        }
+
+        // 动画循环
+        function animate() {
+            requestAnimationFrame(animate);
+            TWEEN.update();
+            renderer.render(scene, camera);
+        }
+
+        // 响应式调整
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / (window.innerHeight * 0.7);
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight * 0.7);
+        });
+
+        // 启动应用
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，开始初始化应用...');
+            // 确保Three.js和Tween.js已加载
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js未加载');
+                document.getElementById('loading').textContent = 'Three.js库加载失败，请刷新页面重试';
+                return;
+            }
+            
+            if (typeof TWEEN === 'undefined') {
+                console.error('Tween.js未加载');
+                document.getElementById('loading').textContent = 'Tween.js库加载失败，请刷新页面重试';
+                return;
+            }
+            
+            console.log('所有依赖库已加载，开始初始化...');
+            init();
+        });
+    </script>
+</body>
+</html> 

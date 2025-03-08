@@ -1,0 +1,92 @@
+[
+    {
+        "year": "1902",
+        "title": "震旦学院创立",
+        "description": "马相伯倾其家产创办震旦学院，奠定复旦大学前身。",
+        "image": "/assets/images/1.png"
+    },
+    {
+        "year": "1912",
+        "title": "孙中山拨款复校",
+        "description": "孙中山先生拨款一万元帮助复旦复校，校址迁至徐家汇李鸿章公祠。",
+        "image": "/assets/images/3.png"
+    },
+    {
+        "year": "1919",
+        "title": "复旦师生参与五四运动",
+        "description": "复旦学生积极参与爱国运动，邵力子敲响上海\"五四第一钟\"。",
+        "image": "/assets/images/4.png"
+    },
+    {
+        "year": "1920",
+        "title": "陈望道翻译《共产党宣言》并任教复旦",
+        "description": "陈望道翻译并出版《共产党宣言》第一个中文全译本，年底来到复旦任教。",
+        "image": "assets/images/5.png"
+    },
+    {
+        "year": "1922",
+        "title": "复旦大学部迁址江湾",
+        "description": "复旦大学部迁址江湾，中学部留徐家汇原址，称私立复旦大学附属中学。",
+        "image": "assets/images/6.png"
+    },
+    {
+        "year": "1927",
+        "title": "国立第四中山大学医学院建立",
+        "description": "国立第四中山大学医学院在上海吴淞建立，为上海医科大学前身。",
+        "image": "assets/images/7.png"
+    },
+    {
+        "year": "1937",
+        "title": "抗战爆发，复旦内迁重庆北碚",
+        "description": "抗战爆发后，复旦大学内迁重庆北碚。",
+        "image": "assets/images/8.png"
+    },
+    {
+        "year": "1958",
+        "title": "复旦参与原子弹研制技术",
+        "description": "复旦组成\"58中队\"参与原子弹研制技术。",
+        "image": "assets/images/10.png"
+    },
+    {
+        "year": "1977",
+        "title": "苏步青出任校长，复旦恢复招收本科生",
+        "description": "苏步青出任校长，复旦恢复招收本科生。",
+        "image": "assets/images/11.png"
+    },
+    {
+        "year": "1981",
+        "title": "复旦成为全国首批博士、硕士学位授予单位",
+        "description": "复旦成为全国首批博士、硕士学位授予单位。",
+        "image": "assets/images/12.png"
+    },
+    {
+        "year": "2000",
+        "title": "复旦大学与上海医科大学合并",
+        "description": "复旦大学与上海医科大学强强联合，组建新的复旦大学。",
+        "image": "assets/images/13.png"
+    },
+    {
+        "year": "2005",
+        "title": "复旦大学隆重庆祝建校一百周年",
+        "description": "明确建设世界一流水平的社会主义综合性大学目标。",
+        "image": "assets/images/14.png"
+    },
+    {
+        "year": "2015",
+        "title": "复旦大学成立类脑智能科学与技术研究院",
+        "description": "推动人工智能和脑科学研究，引领未来科技发展。",
+        "image": "assets/images/17.png"
+    },
+    {
+        "year": "2020",
+        "title": "复旦大学附属医院医护人员驰援武汉抗击新冠疫情",
+        "description": "复旦人在国家危难时刻展现担当。",
+        "image": "assets/images/19.png"
+    },
+    {
+        "year": "2024",
+        "title": "复旦大学成立多个新工科创新学院",
+        "description": "涵盖集成电路、智能机器人等多个前沿领域。",
+        "image": "assets/images/21.png"
+    }
+] 

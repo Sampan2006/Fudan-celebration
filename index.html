@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>百廿光华 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
+        </div>
+    </nav>
+
+    <!-- 加载动画 -->
+    <div class="loading-screen">
+        <div class="loader">
+            <div class="loader-spinner"></div>
+            <div class="loader-text">正在加载 <span class="progress">0%</span></div>
+        </div>
+    </div>
+
+    <div class="container hide">
+        <div class="landing-page">
+            <div class="content">
+                <h1 class="main-title">
+                    <span class="text-shine">百廿光华</span>
+                </h1>
+                <div class="sub-title">复旦120周年</div>
+                
+                <div class="navigation-buttons">
+                    <a href="./directory.html" class="nav-btn primary-btn enter-btn">
+                        <span>进入</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 音乐控制按钮 -->
+        <div class="music-control">
+            <svg class="music-icon" viewBox="0 0 24 24">
+                <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+            </svg>
+        </div>
+
+        <!-- 社交分享按钮 -->
+        <div class="share-buttons">
+            <button class="share-btn" data-platform="wechat">
+                <i class="fab fa-weixin"></i>
+            </button>
+            <button class="share-btn" data-platform="weibo">
+                <i class="fab fa-weibo"></i>
+            </button>
+        </div>
+        
+        <!-- 添加更多内容区域 -->
+        <section class="school-intro">
+            <div class="container">
+                <h2 class="section-title">复旦大学简介</h2>
+                <div class="intro-content">
+                    <div class="intro-text">
+                        <p>复旦大学创建于1905年，是中国人自主创办的第一所高等院校，是中国最著名的高等学府之一。</p>
+                        <p>百余年来，复旦大学秉承"博学而笃志，切问而近思"的校训，坚持"文明、健康、团结、奋发"的校风，培养了大批杰出人才。</p>
+                        <p>如今的复旦大学已发展成为一所国内一流、国际知名的综合性研究型大学，在人文社科、自然科学、医学等领域均有卓越成就。</p>
+                    </div>
+                    <div class="intro-image">
+                        <img src="assets/images/百廿光华.png" alt="复旦大学" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="anniversary-events">
+            <div class="container">
+                <h2 class="section-title">120周年校庆活动</h2>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3>学术论坛</h3>
+                        <p>邀请国内外知名学者参与的高水平学术交流活动</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-music"></i></div>
+                        <h3>文艺演出</h3>
+                        <p>校园文化艺术节、校友合唱团专场演出等精彩活动</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-book"></i></div>
+                        <h3>校史展览</h3>
+                        <p>全面展示复旦大学百余年来的发展历程与辉煌成就</p>
+                    </div>
+                    <div class="event-card">
+                        <div class="event-icon"><i class="fas fa-users"></i></div>
+                        <h3>校友返校</h3>
+                        <p>组织各届校友返校活动，共叙复旦情谊</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="site-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-logo">
+                        <img src="assets/images/fudan-logo.png" alt="复旦大学" />
+                    </div>
+                    <div class="footer-info">
+                        <p>地址：上海市杨浦区邯郸路220号</p>
+                        <p>邮编：200433</p>
+                        <p>电话：021-65642222</p>
+                    </div>
+                    <div class="footer-links">
+                        <a href="timeline.html">历史时间轴</a>
+                        <a href="achievements.html">成就展示</a>
+                        <a href="directory.html">内容目录</a>
+                        <a href="#">联系我们</a>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>&copy; 2023 复旦大学. 版权所有.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

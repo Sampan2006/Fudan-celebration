@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>积分中心 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .points-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .points-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .points-title {
+            color: var(--fudan-blue);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .points-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .points-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .points-value {
+            font-size: 3rem;
+            color: var(--fudan-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .points-label {
+            color: #666;
+        }
+
+        .points-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .points-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .points-tab.active {
+            color: var(--fudan-red);
+            border-bottom: 2px solid var(--fudan-red);
+            margin-bottom: -2px;
+        }
+
+        .points-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* 积分明细样式 */
+        .points-history {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .history-info {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .history-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--fudan-blue);
+        }
+
+        .history-details h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .history-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .points-change {
+            font-weight: bold;
+        }
+
+        .points-change.positive {
+            color: #28a745;
+        }
+
+        .points-change.negative {
+            color: #dc3545;
+        }
+
+        /* 兑换商城样式 */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .shop-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .shop-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .shop-icon {
+            font-size: 2.5rem;
+            color: var(--fudan-blue);
+            margin-bottom: 1rem;
+        }
+
+        .shop-name {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .shop-points {
+            color: var(--fudan-red);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .shop-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--fudan-red);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .shop-btn:hover {
+            background: var(--fudan-blue);
+        }
+
+        .shop-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 排行榜样式 */
+        .ranking-list {
+            counter-reset: ranking;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .ranking-item:last-child {
+            border-bottom: none;
+        }
+
+        .ranking-position {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        .ranking-item:nth-child(1) .ranking-position {
+            background: gold;
+            color: white;
+        }
+
+        .ranking-item:nth-child(2) .ranking-position {
+            background: silver;
+            color: white;
+        }
+
+        .ranking-item:nth-child(3) .ranking-position {
+            background: #cd7f32;
+            color: white;
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .ranking-title {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .ranking-points {
+            font-weight: bold;
+            color: var(--fudan-red);
+        }
+
+        .achievement-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .achievement-notification.show {
+            transform: translateX(0);
+        }
+
+        .achievement-notification i {
+            font-size: 24px;
+            color: var(--fudan-red);
+        }
+
+        .achievement-text h3 {
+            margin: 0;
+            color: var(--fudan-red);
+            font-size: 16px;
+        }
+
+        .achievement-text p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="quiz.html"><i class="fas fa-question-circle"></i> 答题闯关</a>
+            <a href="treasure.html"><i class="fas fa-map-marked-alt"></i> 寻宝游戏</a>
+            <a href="wishes.html"><i class="fas fa-heart"></i> 祝福墙</a>
+            <div class="user-menu" id="userMenu">
+                <div class="user-dropdown">
+                    <span class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">用户名</span>
+                        <span id="userPoints" class="user-points">0 积分</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="points-container">
+        <div class="points-header">
+            <h1 class="points-title">积分中心</h1>
+            <p class="points-subtitle">参与答题闯关和寻宝游戏赚取积分，解锁更多精彩特权</p>
+        </div>
+
+        <div class="points-overview">
+            <div class="points-value" id="totalPoints">0</div>
+            <div class="points-label">当前积分</div>
+        </div>
+
+        <div class="points-tabs">
+            <div class="points-tab active" data-tab="history">积分明细</div>
+            <div class="points-tab" data-tab="shop">特效商城</div>
+            <div class="points-tab" data-tab="ranking">排行榜</div>
+        </div>
+
+        <div class="points-content">
+            <!-- 积分明细 -->
+            <div class="points-history" id="pointsHistory">
+                <!-- 将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 特效商城 -->
+            <div class="shop-grid" id="pointsShop" style="display: none;">
+                <!-- 将通过JavaScript动态生成 -->
+            </div>
+
+            <!-- 排行榜 -->
+            <div class="ranking-list" id="pointsRanking" style="display: none;">
+                <!-- 将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 用户积分数据结构
+        const userPoints = {
+            points: 0,
+            history: [],
+            effects: [],
+            titles: []
+        };
+
+        // 商品数据
+        const shopItems = [
+            {
+                id: 'effect_rainbow',
+                name: '彩虹特效',
+                icon: 'fas fa-rainbow',
+                points: 100,
+                description: '为祝福文字添加彩虹渐变效果'
+            },
+            {
+                id: 'effect_sparkle',
+                name: '闪耀特效',
+                icon: 'fas fa-star',
+                points: 200,
+                description: '为祝福文字添加闪耀动画'
+            },
+            {
+                id: 'title_expert',
+                name: '知识达人',
+                icon: 'fas fa-crown',
+                points: 500,
+                description: '完成所有答题关卡的荣誉称号'
+            },
+            {
+                id: 'title_explorer',
+                name: '探索先锋',
+                icon: 'fas fa-compass',
+                points: 500,
+                description: '完成所有寻宝任务的荣誉称号'
+            },
+            {
+                id: 'title_perfect',
+                name: '完美解答者',
+                icon: 'fas fa-award',
+                points: 300,
+                description: '在任意关卡中获得满分'
+            },
+            {
+                id: 'title_speed',
+                name: '速答达人',
+                icon: 'fas fa-bolt',
+                points: 300,
+                description: '在30秒内完成一个关卡'
+            },
+            {
+                id: 'title_scholar',
+                name: '博学者',
+                icon: 'fas fa-graduation-cap',
+                points: 400,
+                description: '累计答对50题'
+            },
+            {
+                id: 'title_persistent',
+                name: '不屈不挠',
+                icon: 'fas fa-fist-raised',
+                points: 200,
+                description: '答错3次后仍坚持完成关卡'
+            },
+            {
+                id: 'title_guide',
+                name: '校园导游',
+                icon: 'fas fa-map-marked-alt',
+                points: 300,
+                description: '累计完成10个寻宝任务'
+            },
+            {
+                id: 'title_puzzle',
+                name: '解谜大师',
+                icon: 'fas fa-puzzle-piece',
+                points: 400,
+                description: '首次尝试即正确解开3个谜题'
+            },
+            {
+                id: 'title_architect',
+                name: '建筑历史家',
+                icon: 'fas fa-landmark',
+                points: 400,
+                description: '完成所有与建筑相关的任务'
+            },
+            {
+                id: 'title_historian',
+                name: '校史通',
+                icon: 'fas fa-book-reader',
+                points: 400,
+                description: '完成所有与校史相关的任务'
+            },
+            {
+                id: 'title_millionaire',
+                name: '积分富翁',
+                icon: 'fas fa-coins',
+                points: 1000,
+                description: '累计获得1000积分'
+            },
+            {
+                id: 'title_collector',
+                name: '收藏家',
+                icon: 'fas fa-shopping-cart',
+                points: 600,
+                description: '购买5个特效'
+            },
+            {
+                id: 'title_diligent',
+                name: '勤奋学者',
+                icon: 'fas fa-calendar-check',
+                points: 300,
+                description: '连续7天登录'
+            },
+            {
+                id: 'title_social',
+                name: '社交达人',
+                icon: 'fas fa-comments',
+                points: 400,
+                description: '在祝福墙发布10条祝福'
+            },
+            {
+                id: 'title_liker',
+                name: '点赞之星',
+                icon: 'fas fa-thumbs-up',
+                points: 300,
+                description: '给其他用户点赞50次'
+            }
+        ];
+
+        // 初始化用户数据
+        function initUserPoints() {
+            const userData = JSON.parse(localStorage.getItem('user'));
+            if (userData) {
+                userPoints.points = userData.points || 0;
+                userPoints.history = userData.pointsHistory || [];
+                userPoints.effects = userData.effects || [];
+                userPoints.titles = userData.titles || [];
+                updatePointsDisplay();
+            }
+        }
+
+        // 更新积分显示
+        function updatePointsDisplay() {
+            document.getElementById('totalPoints').textContent = userPoints.points;
+            document.getElementById('userPoints').textContent = `${userPoints.points} 积分`;
+        }
+
+        // 添加积分记录
+        function addPointsHistory(points, reason, type) {
+            const record = {
+                points: points,
+                reason: reason,
+                type: type,
+                date: new Date().toISOString()
+            };
+            userPoints.history.unshift(record);
+            userPoints.points += points;
+            
+            // 更新localStorage
+            const userData = JSON.parse(localStorage.getItem('user'));
+            userData.points = userPoints.points;
+            userData.pointsHistory = userPoints.history;
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            updatePointsDisplay();
+            renderPointsHistory();
+        }
+
+        // 渲染积分明细
+        function renderPointsHistory() {
+            const container = document.getElementById('pointsHistory');
+            container.innerHTML = userPoints.history.map(record => `
+                <div class="history-item">
+                    <div class="history-info">
+                        <div class="history-icon">
+                            <i class="fas ${record.type === 'quiz' ? 'fa-question-circle' : 'fa-map-marked-alt'}"></i>
+                        </div>
+                        <div class="history-details">
+                            <h3>${record.reason}</h3>
+                            <div class="history-date">${new Date(record.date).toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <div class="points-change ${record.points > 0 ? 'positive' : 'negative'}">
+                        ${record.points > 0 ? '+' : ''}${record.points}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染特效商城
+        function renderPointsShop() {
+            const container = document.getElementById('pointsShop');
+            container.innerHTML = shopItems.map(item => `
+                <div class="shop-item">
+                    <div class="shop-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <div class="shop-name">${item.name}</div>
+                    <div class="shop-points">${item.points} 积分</div>
+                    <button class="shop-btn" onclick="purchaseItem('${item.id}')"
+                            ${userPoints.points < item.points || userPoints.effects.includes(item.id) ? 'disabled' : ''}>
+                        ${userPoints.effects.includes(item.id) ? '已拥有' : '兑换'}
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // 渲染排行榜
+        function renderPointsRanking() {
+            // 获取所有用户数据并排序
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const sortedUsers = users.sort((a, b) => (b.points || 0) - (a.points || 0));
+            
+            const container = document.getElementById('pointsRanking');
+            container.innerHTML = sortedUsers.slice(0, 10).map((user, index) => `
+                <div class="ranking-item">
+                    <div class="ranking-position">${index + 1}</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">${user.name}</div>
+                        <div class="ranking-title">${user.titles?.join(', ') || '暂无称号'}</div>
+                    </div>
+                    <div class="ranking-points">${user.points || 0}</div>
+                </div>
+            `).join('');
+        }
+
+        // 购买特效或称号
+        function purchaseItem(itemId) {
+            const item = shopItems.find(i => i.id === itemId);
+            if (item && userPoints.points >= item.points && !userPoints.effects.includes(itemId)) {
+                addPointsHistory(-item.points, `购买${item.name}`, 'purchase');
+                userPoints.effects.push(itemId);
+                
+                // 更新localStorage
+                const userData = JSON.parse(localStorage.getItem('user'));
+                userData.effects = userPoints.effects;
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                renderPointsShop();
+                alert(`购买成功！${item.name}已添加到您的收藏中。`);
+            }
+        }
+
+        // 切换标签页
+        document.querySelectorAll('.points-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.points-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabName = tab.dataset.tab;
+                document.getElementById('pointsHistory').style.display = tabName === 'history' ? 'grid' : 'none';
+                document.getElementById('pointsShop').style.display = tabName === 'shop' ? 'grid' : 'none';
+                document.getElementById('pointsRanking').style.display = tabName === 'ranking' ? 'block' : 'none';
+                
+                if (tabName === 'shop') renderPointsShop();
+                else if (tabName === 'ranking') renderPointsRanking();
+            });
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initUserPoints();
+            renderPointsHistory();
+        });
+
+        // 检查成就
+        function checkAchievements(userData) {
+            if (!userData) return;
+            
+            if (!userData.titles) {
+                userData.titles = [];
+            }
+
+            // 检查积分相关成就
+            if (userData.points >= 1000 && !userData.titles.includes('积分富翁')) {
+                userData.titles.push('积分富翁');
+                showAchievementNotification('积分富翁');
+            }
+
+            // 检查特效收藏相关成就
+            const effectCount = userData.effects?.filter(effect => effect.startsWith('effect_')).length || 0;
+            if (effectCount >= 5 && !userData.titles.includes('收藏家')) {
+                userData.titles.push('收藏家');
+                showAchievementNotification('收藏家');
+            }
+
+            // 检查连续登录成就
+            if (userData.loginStreak >= 7 && !userData.titles.includes('勤奋学者')) {
+                userData.titles.push('勤奋学者');
+                showAchievementNotification('勤奋学者');
+            }
+
+            // 检查祝福墙相关成就
+            const wishCount = userData.wishes?.length || 0;
+            if (wishCount >= 10 && !userData.titles.includes('社交达人')) {
+                userData.titles.push('社交达人');
+                showAchievementNotification('社交达人');
+            }
+
+            // 检查点赞相关成就
+            const likeCount = userData.likedWishes?.length || 0;
+            if (likeCount >= 50 && !userData.titles.includes('点赞之星')) {
+                userData.titles.push('点赞之星');
+                showAchievementNotification('点赞之星');
+            }
+
+            // 保存更新后的用户数据
+            localStorage.setItem('user', JSON.stringify(userData));
+        }
+
+        // 显示成就获得提示
+        function showAchievementNotification(titleName) {
+            const title = shopItems.find(item => item.name === titleName);
+            if (!title) return;
+
+            const notification = document.createElement('div');
+            notification.className = 'achievement-notification';
+            notification.innerHTML = `
+                <i class="${title.icon}"></i>
+                <div class="achievement-text">
+                    <h3>获得新称号！</h3>
+                    <p>${title.name}：${title.description}</p>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 

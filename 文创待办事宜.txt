@@ -1,0 +1,34 @@
+1. 社交分享缩略图
+2. 您需要添加一个复旦大学的logo图片到assets/images/fudan-logo.png，我已经创建了一个占位符文件提醒这一点。
+3.攀登游戏素材：
+在 assets/images 文件夹中添加以下图片：
+student.png - 复旦学子角色
+academic-cat.png - 学术喵角色
+platform.png - 平台图片
+badge.png - 校徽图片
+obstacle.png - 障碍物图片
+rain.png - 雨滴效果
+snow.png - 雪花效果
+wind.png - 风效果
+building-silhouette.png - 建筑剪影
+
+
+
+
+重要代码
+
+使用 Python 启动本地服务器
+python -m http.server 8080
+
+# 或使用 Node.js 的 http-server
+npx http-server
+
+# 然后在浏览器中访问
+http://localhost:8080
+
+
+
+
+
+
+

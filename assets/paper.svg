@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- 考试卷 -->
+    <rect x="6" y="4" width="20" height="24" fill="#fff"/>
+    <rect x="8" y="8" width="16" height="2" fill="#666"/>
+    <rect x="8" y="12" width="12" height="2" fill="#666"/>
+    <rect x="8" y="16" width="14" height="2" fill="#666"/>
+    <rect x="8" y="20" width="10" height="2" fill="#666"/>
+    <circle cx="24" cy="24" r="6" fill="#d32f2f"/>
+    <text x="24" y="27" font-family="Arial" font-size="8" text-anchor="middle" fill="#fff">A</text>
+</svg> 

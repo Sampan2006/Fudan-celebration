@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校史问答闯关 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --fudan-blue: #1a237e;
+            --fudan-red: #b71c1c;
+            --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 动态背景特效 */
+        .dynamic-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            opacity: 0.1;
+            animation: bg-pulse 20s infinite;
+        }
+
+        @keyframes bg-pulse {
+            0% { opacity: 0.1; }
+            50% { opacity: 0.15; }
+            100% { opacity: 0.1; }
+        }
+
+        /* 连击特效 */
+        .combo-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            color: #ffd700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        /* 新增连击弹出效果 */
+        .combo-popup {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2em;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+            animation: comboFloat 1s ease-out;
+            display: none;
+            z-index: 1001;
+        }
+
+        @keyframes comboFloat {
+            0% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, -100px); }
+        }
+
+        /* 计时挑战模式 */
+        .timer-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            z-index: 1000;
+        }
+
+        .timer-progress {
+            width: 200px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+
+        .top-navbar {
+            background-color: var(--fudan-red);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .quiz-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .question-tag {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: var(--fudan-red);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .media-question {
+            margin: 1rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .media-image {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .option-btn:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.correct {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+            animation: correctAnswer 0.5s ease;
+        }
+
+        .option-btn.wrong {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+            animation: wrongAnswer 0.5s ease;
+        }
+
+        @keyframes correctAnswer {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes wrongAnswer {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        .stats-bar {
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--fudan-blue);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .stat-multiplier {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ffd700;
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        /* 每日挑战模态框 */
+        .daily-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .streak-counter {
+            font-size: 1.5rem;
+            color: #ff6b6b;
+            margin: 1rem 0;
+        }
+
+        .challenge-rules {
+            text-align: left;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .primary-btn {
+            background: var(--fudan-red);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timer-container {
+                display: none;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dynamic-background"></div>
+    <div class="combo-display" id="comboDisplay">连击 x<span>0</span></div>
+    <div class="combo-popup" id="comboPopup"></div>
+    <div class="timer-container" id="timerBox" style="display: none;">
+        <div>剩余时间：<span id="timer">30</span>秒</div>
+        <div class="timer-progress"><div class="timer-fill" id="timerFill"></div></div>
+    </div>
+
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">复旦120周年</a>
+        <div class="nav-links">
+            <a href="index.html">首页</a>
+            <a href="directory.html">内容目录</a>
+            <a href="games.html">趣味游戏</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="scoreValue">0</div>
+                <div class="stat-label">总分</div>
+                <div class="stat-multiplier" id="scoreMultiplier">x1.0</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="streakValue">0</div>
+                <div class="stat-label">连续答对</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="accuracyValue">0%</div>
+                <div class="stat-label">正确率</div>
+            </div>
+        </div>
+
+        <div class="quiz-card" id="questionCard">
+            <div class="question-tag" id="questionType">文字题</div>
+            <div class="question-text" id="questionText">
+                准备开始答题...
+            </div>
+            <div class="media-question" id="mediaContainer" style="display: none;">
+                <img class="media-image" id="questionImage" src="" alt="">
+            </div>
+            <div class="options-grid" id="optionsContainer">
+                <!-- 选项将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="daily-modal" id="dailyModal">
+        <div class="modal-content">
+            <h2>今日挑战</h2>
+            <div class="streak-counter">
+                <span id="streakCount">0</span> 日连胜
+            </div>
+            <div class="challenge-rules">
+                <p>🎯 完成3道随机难题</p>
+                <p>⏱ 限时60秒</p>
+                <p>🔥 连胜奖励逐日增加</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn primary-btn" onclick="startDailyChallenge()">
+                    开始挑战
+                </button>
+                <button class="action-btn secondary-btn" onclick="closeDailyModal()">
+                    稍后再试
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/quiz-game.js"></script>
+</body>
+</html> 

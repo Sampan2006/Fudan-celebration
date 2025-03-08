@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            margin-bottom: 2rem;
+        }
+
+        .admin-title {
+            color: var(--fudan-blue);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .admin-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .admin-tab.active {
+            color: var(--fudan-red);
+            border-bottom: 2px solid var(--fudan-red);
+            margin-bottom: -2px;
+        }
+
+        .admin-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .review-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .review-item {
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .review-item:hover {
+            border-color: var(--fudan-red);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-info {
+            display: flex;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .review-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .review-btn.approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .review-btn.reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .review-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .filter-input:focus {
+            border-color: var(--fudan-red);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="wishes.html"><i class="fas fa-heart"></i> 祝福墙</a>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">管理后台</h1>
+            <p class="admin-subtitle">管理祝福墙内容，审核评论</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalWishes">0</div>
+                <div class="stat-label">总祝福数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="pendingComments">0</div>
+                <div class="stat-label">待审核评论</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-label">注册用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="todayActive">0</div>
+                <div class="stat-label">今日活跃用户</div>
+            </div>
+        </div>
+
+        <div class="admin-tabs">
+            <div class="admin-tab active" data-tab="comments">评论审核</div>
+            <div class="admin-tab" data-tab="wishes">祝福管理</div>
+            <div class="admin-tab" data-tab="users">用户管理</div>
+        </div>
+
+        <div class="admin-content">
+            <div class="filter-bar">
+                <input type="text" class="filter-input" placeholder="搜索关键词...">
+                <select class="filter-input">
+                    <option value="all">全部状态</option>
+                    <option value="pending">待审核</option>
+                    <option value="approved">已通过</option>
+                    <option value="rejected">已拒绝</option>
+                </select>
+            </div>
+
+            <div class="review-list" id="reviewList">
+                <!-- 评论列表将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取统计数据
+        function loadStats() {
+            const wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
+            document.getElementById('totalWishes').textContent = wishes.length;
+
+            let pendingComments = 0;
+            wishes.forEach(wish => {
+                const comments = JSON.parse(localStorage.getItem(`wish_${wish.id}_comments`) || '[]');
+                pendingComments += comments.filter(comment => comment.status === 'pending').length;
+            });
+            document.getElementById('pendingComments').textContent = pendingComments;
+
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            document.getElementById('totalUsers').textContent = users.length;
+
+            const today = new Date().toDateString();
+            const activeUsers = users.filter(user => user.lastActive === today).length;
+            document.getElementById('todayActive').textContent = activeUsers;
+        }
+
+        // 加载待审核评论
+        function loadPendingComments() {
+            const wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
+            const reviewList = document.getElementById('reviewList');
+            let pendingComments = [];
+
+            wishes.forEach(wish => {
+                const comments = JSON.parse(localStorage.getItem(`wish_${wish.id}_comments`) || '[]');
+                const pending = comments
+                    .filter(comment => comment.status === 'pending')
+                    .map(comment => ({...comment, wishId: wish.id, wishContent: wish.content}));
+                pendingComments = [...pendingComments, ...pending];
+            });
+
+            reviewList.innerHTML = pendingComments.map(comment => `
+                <div class="review-item" data-wish-id="${comment.wishId}" data-comment-id="${comment.date}">
+                    <div class="review-header">
+                        <div class="review-info">
+                            <span><i class="fas fa-user"></i> ${comment.author}</span>
+                            <span><i class="fas fa-clock"></i> ${new Date(comment.date).toLocaleString()}</span>
+                        </div>
+                        <div class="review-actions">
+                            <button class="review-btn approve" onclick="approveComment(this)">
+                                <i class="fas fa-check"></i> 通过
+                            </button>
+                            <button class="review-btn reject" onclick="rejectComment(this)">
+                                <i class="fas fa-times"></i> 拒绝
+                            </button>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        <p><strong>原文：</strong>${comment.wishContent}</p>
+                        <p><strong>评论：</strong>${comment.content}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 审核评论
+        function approveComment(btn) {
+            const item = btn.closest('.review-item');
+            const wishId = item.dataset.wishId;
+            const commentId = item.dataset.commentId;
+            
+            const comments = JSON.parse(localStorage.getItem(`wish_${wishId}_comments`) || '[]');
+            const commentIndex = comments.findIndex(c => c.date === commentId);
+            
+            if (commentIndex !== -1) {
+                comments[commentIndex].status = 'approved';
+                localStorage.setItem(`wish_${wishId}_comments`, JSON.stringify(comments));
+                item.remove();
+                loadStats();
+            }
+        }
+
+        function rejectComment(btn) {
+            const item = btn.closest('.review-item');
+            const wishId = item.dataset.wishId;
+            const commentId = item.dataset.commentId;
+            
+            const comments = JSON.parse(localStorage.getItem(`wish_${wishId}_comments`) || '[]');
+            const commentIndex = comments.findIndex(c => c.date === commentId);
+            
+            if (commentIndex !== -1) {
+                comments[commentIndex].status = 'rejected';
+                localStorage.setItem(`wish_${wishId}_comments`, JSON.stringify(comments));
+                item.remove();
+                loadStats();
+            }
+        }
+
+        // 切换标签页
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // 这里可以添加加载不同标签页内容的逻辑
+            });
+        });
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadPendingComments();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容目录 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .directory-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2.5rem;
+            padding: 0.5rem;
+        }
+
+        .directory-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .directory-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 为每个卡片设置独特的渐变色背景 */
+        .directory-card:nth-child(1) .card-image {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+        }
+
+        .directory-card:nth-child(2) .card-image {
+            background: linear-gradient(135deg, #9e1f14, #ef4444);
+        }
+
+        .directory-card:nth-child(3) .card-image {
+            background: linear-gradient(135deg, #047857, #10b981);
+        }
+
+        .directory-card:nth-child(4) .card-image {
+            background: linear-gradient(135deg, #6d28d9, #8b5cf6);
+        }
+
+        .directory-card:nth-child(5) .card-image {
+            background: linear-gradient(135deg, #c2410c, #f97316);
+        }
+
+        .directory-card:nth-child(6) .card-image {
+            background: linear-gradient(135deg, #4f46e5, #818cf8);
+        }
+
+        .directory-card:nth-child(7) .card-image {
+            background: linear-gradient(135deg, #be123c, #fb7185);
+        }
+
+        .card-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.3));
+        }
+
+        .card-icon {
+            position: relative;
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            opacity: 0.9;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .directory-card:hover .card-icon {
+            transform: scale(1.1);
+        }
+
+        .card-content {
+            padding: 1.8rem;
+            background: white;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            color: var(--fudan-blue);
+            margin: 0 0 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: 600;
+        }
+
+        .card-title i {
+            font-size: 1.1rem;
+            color: var(--fudan-red);
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .section-title {
+            color: var(--fudan-blue);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--fudan-red);
+        }
+
+        .section-description {
+            color: #666;
+            max-width: 800px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html" class="active"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
+        </div>
+    </nav>
+
+    <div class="directory-container">
+        <h1 class="section-title">内容目录</h1>
+        <p class="section-description">
+            探索复旦大学120周年校庆的丰富内容，包括校史影像、历史时间轴、成就展示等多个板块。
+            点击下方卡片，开启您的复旦文化之旅。
+        </p>
+
+        <div class="directory-grid">
+            <a href="video.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-play-circle card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-film"></i>
+                        校史视频专区
+                    </h2>
+                    <p class="card-description">
+                        观看复旦大学校史专题片，了解百年复旦的光辉历程与发展成就。
+                    </p>
+                </div>
+            </a>
+
+            <a href="timeline.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-clock card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-history"></i>
+                        历史时间轴
+                    </h2>
+                    <p class="card-description">
+                        按时间顺序展现复旦大学的重要历史事件和里程碑时刻。
+                    </p>
+                </div>
+            </a>
+
+            <a href="achievements.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-trophy card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-award"></i>
+                        成就展示
+                    </h2>
+                    <p class="card-description">
+                        展现复旦大学在教育、科研、人才培养等方面取得的卓越成就。
+                    </p>
+                </div>
+            </a>
+
+            <a href="buildings.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-landmark card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-landmark"></i>
+                        标志性建筑
+                    </h2>
+                    <p class="card-description">
+                        漫步复旦校园，探索光华楼等标志性建筑背后的历史故事与人文底蕴。
+                    </p>
+                </div>
+            </a>
+
+            <a href="alumni.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-user-graduate card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-user-graduate"></i>
+                        杰出校友
+                    </h2>
+                    <p class="card-description">
+                        致敬为国家和社会发展做出重要贡献的复旦杰出校友。
+                    </p>
+                </div>
+            </a>
+
+            <div class="directory-card" onclick="window.location.href='games.html'">
+                <div class="card-image">
+                    <i class="fas fa-gamepad card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-gamepad"></i>
+                        趣味游戏
+                    </h2>
+                    <p class="card-description">
+                        参与校园寻宝和校史问答游戏，在互动中了解复旦历史，赢取精美纪念品。
+                    </p>
+                </div>
+            </div>
+
+            <a href="wishes.html" class="directory-card">
+                <div class="card-image">
+                    <i class="fas fa-heart card-icon"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <i class="fas fa-comment-dots"></i>
+                        祝福墙
+                    </h2>
+                    <p class="card-description">
+                        在这里留下您对母校的祝福与期望，与全球复旦人共同庆祝120周年校庆。
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 添加页面载入动画效果
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.directory-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+</html> 

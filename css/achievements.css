@@ -1,0 +1,244 @@
+/* 成就展示页面样式 */
+:root {
+    --fudan-red: #9e1f14;
+    --fudan-gold: #d4af37;
+    --fudan-blue: #1e3a8a;
+    --light-gray: #f5f5f5;
+    --dark-gray: #333333;
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+/* 主要内容区样式 */
+.achievements-main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 标题样式 */
+.section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.section-title h2 {
+    font-size: 2.5rem;
+    color: var(--fudan-red);
+    margin-bottom: 0.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--fudan-gold);
+}
+
+.section-title p {
+    font-size: 1.2rem;
+    color: var(--dark-gray);
+    font-weight: 300;
+}
+
+/* 数据可视化容器 */
+.visualization-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+/* 图表卡片样式 */
+.chart-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    transition: transform var(--transition-speed);
+    overflow: hidden;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px);
+}
+
+.chart-card h3 {
+    color: var(--fudan-blue);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    position: relative;
+}
+
+.chart-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 2px;
+    background: var(--fudan-gold);
+}
+
+.chart-wrapper {
+    height: 300px;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.chart-description {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    padding: 0.5rem;
+    background: var(--light-gray);
+    border-radius: 5px;
+}
+
+/* 校友成就区域 */
+.alumni-achievements {
+    margin-top: 3rem;
+}
+
+.alumni-achievements h3 {
+    color: var(--fudan-blue);
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.alumni-achievements h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: var(--fudan-gold);
+}
+
+.alumni-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.alumni-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    transition: transform var(--transition-speed);
+}
+
+.alumni-card:hover {
+    transform: translateY(-5px);
+}
+
+.alumni-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.alumni-info {
+    padding: 1rem;
+}
+
+.alumni-info h4 {
+    color: var(--fudan-red);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.alumni-info p.alumni-title {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+.alumni-info p.alumni-description {
+    color: var(--dark-gray);
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* 返回顶部按钮 */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--fudan-red);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-speed);
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background: var(--fudan-blue);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .achievements-main {
+        padding: 1rem;
+    }
+    
+    .section-title h2 {
+        font-size: 2rem;
+    }
+    
+    .visualization-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-wrapper {
+        height: 250px;
+    }
+    
+    .alumni-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .section-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .chart-card {
+        padding: 1rem;
+    }
+    
+    .alumni-container {
+        grid-template-columns: 1fr;
+    }
+} 

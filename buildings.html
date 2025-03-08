@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复旦大学 - 校区展示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* 综合布局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0;
+        }
+
+        /* 移除导航条 */
+        .top-navbar {
+            display: none !important;
+        }
+        
+        /* 确保导航栏不占用空间 */
+        nav {
+            height: 0 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        /* 页面标题 */
+        .page-header {
+            background-color: var(--fudan-red);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 校区展示区域 */
+        .campus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .campus-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            cursor: pointer;
+            height: 350px;
+        }
+
+        .campus-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .campus-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: filter var(--transition-speed);
+        }
+
+        .campus-card:hover .campus-image {
+            filter: brightness(0.7);
+        }
+
+        .campus-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+            padding: 20px;
+            transform: translateY(0);
+            transition: transform var(--transition-speed);
+        }
+
+        .campus-card:hover .campus-info {
+            transform: translateY(-10px);
+        }
+
+        .campus-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+
+        .campus-brief {
+            font-size: 16px;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .view-more {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--fudan-gold);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 50px auto;
+            max-width: 800px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .modal-header {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+        }
+
+        .modal-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .modal-header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            color: white;
+        }
+
+        .modal-header-overlay h2 {
+            margin: 0 0 5px 0;
+            font-size: 28px;
+        }
+
+        .modal-header-overlay p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-section {
+            margin-bottom: 25px;
+        }
+
+        .modal-section h3 {
+            color: var(--fudan-red);
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .modal-gallery img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .modal-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: var(--fudan-red);
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .campus-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .campus-card {
+                height: 300px;
+            }
+
+            .modal-content {
+                margin: 20px auto;
+            }
+
+            .modal-header {
+                height: 200px;
+            }
+
+            .modal-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 建筑内容区域样式 */
+        .buildings-content {
+            margin-top: 50px;
+            padding: 20px;
+            min-height: 500px;
+        }
+
+        .campus-section {
+            margin-bottom: 60px;
+            scroll-margin-top: 80px;
+        }
+
+        .campus-section h2 {
+            color: var(--fudan-red);
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .campus-description {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .buildings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .building-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .building-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .building-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .building-info {
+            padding: 20px;
+        }
+
+        .building-info h3 {
+            color: var(--fudan-blue);
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+
+        .building-info p {
+            color: #666;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .buildings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 添加平滑滚动效果 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* 确保卡片可点击 */
+        .campus-card {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .campus-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 添加加载动画 */
+        .buildings-content.loading {
+            position: relative;
+            min-height: 200px;
+        }
+
+        .buildings-content.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--fudan-red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* 添加canvas样式 */
+        .background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- 在body开始处添加canvas元素 -->
+    <canvas id="bgCanvas" class="background-canvas"></canvas>
+
+    <!-- 返回目录按钮 -->
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>复旦大学校区展示</h1>
+            <p>百年复旦，四大校区</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="campus-grid">
+            <!-- 邯郸校区 -->
+            <div class="campus-card" data-campus="handan">
+                <img src="assets/images/buildings/handan-campus.png" alt="邯郸校区" class="campus-image">
+                <div class="campus-info">
+                    <h3 class="campus-name">邯郸校区</h3>
+                    <p class="campus-brief">复旦大学的主校区，历史悠久，人文底蕴深厚</p>
+                    <span class="view-more">点击查看详情 <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+
+            <!-- 枫林校区 -->
+            <div class="campus-card" data-campus="fenglin">
+                <img src="assets/images/buildings/fenglin-campus.png" alt="枫林校区" class="campus-image">
+                <div class="campus-info">
+                    <h3 class="campus-name">枫林校区</h3>
+                    <p class="campus-brief">复旦大学医学院所在地，医学教育和研究中心</p>
+                    <span class="view-more">点击查看详情 <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+
+            <!-- 张江校区 -->
+            <div class="campus-card" data-campus="zhangjiang">
+                <img src="assets/images/buildings/zhangjiang-campus.png" alt="张江校区" class="campus-image">
+                <div class="campus-info">
+                    <h3 class="campus-name">张江校区</h3>
+                    <p class="campus-brief">复旦大学科技创新基地，前沿科研重镇</p>
+                    <span class="view-more">点击查看详情 <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+
+            <!-- 江湾校区 -->
+            <div class="campus-card" data-campus="jiangwan">
+                <img src="assets/images/buildings/jiangwan-campus.png" alt="江湾校区" class="campus-image">
+                <div class="campus-info">
+                    <h3 class="campus-name">江湾校区</h3>
+                    <p class="campus-brief">复旦大学的现代化校区，环境优美，设施完善</p>
+                    <span class="view-more">点击查看详情 <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 建筑内容展示区域 -->
+        <div id="buildings-content" class="buildings-content">
+            <!-- 建筑信息将通过JavaScript动态加载到这里 -->
+        </div>
+    </div>
+
+    <!-- 模态框 -->
+    <div id="campusModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <img id="modalImage" src="" alt="">
+                <div class="modal-header-overlay">
+                    <h2 id="modalTitle"></h2>
+                    <p id="modalSubtitle"></p>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="modal-section">
+                    <h3>校区概况</h3>
+                    <p id="modalOverview"></p>
+                </div>
+                <div class="modal-section">
+                    <h3>历史沿革</h3>
+                    <p id="modalHistory"></p>
+                </div>
+                <div class="modal-section">
+                    <h3>标志性建筑</h3>
+                    <div id="modalBuildings">
+                        <!-- 标志性建筑将通过JavaScript动态加载 -->
+                        <p>此部分将由您稍后添加标志性建筑</p>
+                    </div>
+                </div>
+                <div class="modal-section">
+                    <h3>校区风光</h3>
+                    <div class="modal-gallery" id="modalGallery">
+                        <!-- 图片将通过JavaScript动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 校区数据
+        const campusData = {
+            handan: {
+                name: "邯郸校区",
+                subtitle: "复旦大学的主校区",
+                mainImage: "assets/images/buildings/handan-campus.png",
+                overview: "邯郸校区是复旦大学的主校区，位于上海市杨浦区邯郸路220号，占地面积约2000亩。这里是复旦大学的行政中心和主要教学区，也是大部分本科生和研究生学习生活的地方。",
+                history: "邯郸校区的历史可以追溯到1922年，当时复旦大学从徐家汇迁至此地。近百年来，邯郸校区不断发展壮大，形成了今天规模宏大、设施完善的现代化校园。校区内绿树成荫，环境优美，既保留了历史建筑的风貌，又融入了现代化的元素，是一个充满人文气息和学术氛围的高等学府。",
+                gallery: [],
+                buildings: [
+                    {
+                        name: "光华楼",
+                        image: "assets/images/buildings/guanghua.png",
+                        description: "142米高的双子塔楼，亚洲最高教学建筑之一，2005年百年校庆落成。西塔为文史哲学院，东塔为理科学院，中庭15层连接体为图书馆，新古典主义风格与透明球体设计形成'双峰日出'景观。",
+                        link: "#guanghua"
+                    },
+                    {
+                        name: "相辉堂",
+                        image: "assets/images/buildings/xianghui.png",
+                        description: "复旦精神象征，1947年建于抗战时期第一宿舍废墟上，原名登辉堂，1984年更名为相辉堂以纪念马相伯、李登辉两位校长。青瓦白墙的中式建筑，见证校庆典礼、学术讲座等重要活动。",
+                        link: "#xianghui"
+                    },
+                    {
+                        name: "奕柱堂（校史馆）",
+                        image: "assets/images/buildings/yizhu.png",
+                        description: "1921年由华侨黄奕柱捐建，复旦最早建筑之一，融合中西建筑风格。曾为图书馆、院系办公楼，2005年改为校史馆，朱砂红色外墙与对称布局凸显庄重。",
+                        link: "#yizhu"
+                    },
+                    {
+                        name: "燕园",
+                        image: "assets/images/buildings/yanyuan.png",
+                        description: "古典园林景观，小桥流水与亭台楼阁相映成趣，内有'梅林皑雪'等历史景点，为师生休闲读书胜地。",
+                        link: "#yanyuan"
+                    },
+                    {
+                        name: "老校门与子彬院",
+                        image: "assets/images/buildings/oldgate.png",
+                        description: "老校门复刻1920年代江湾校区原貌，石质门框刻有'复旦'篆体，象征学校历史根基。子彬院为解放战争时期学生运动策源地，现为数学科学学院楼，罗马柱与拱门设计保留民国风格。",
+                        link: "#oldgate"
+                    }
+                ]
+            },
+            fenglin: {
+                name: "枫林校区",
+                subtitle: "复旦大学医学院所在地",
+                mainImage: "assets/images/buildings/fenglin-campus.png",
+                overview: "枫林校区是复旦大学医学院所在地，位于上海市徐汇区东安路130号，占地面积约500亩。这里是复旦大学医学教育和研究的中心，也是培养医学人才的重要基地。",
+                history: "枫林校区的前身是上海医学院，始建于1927年，原名国立第四中山大学医学院。2000年，上海医科大学与复旦大学合并，形成了今天的复旦大学医学院。枫林校区拥有悠久的历史和深厚的医学教育传统，培养了大批杰出的医学人才，为中国医学事业的发展做出了重要贡献。",
+                gallery: [],
+                buildings: [
+                    {
+                        name: "东一号楼与宣誓广场",
+                        image: "assets/images/buildings/east1.png",
+                        description: "东一号楼是1950年代上医西迁重庆历史见证，楼前白玉兰树为钱惪教授骨灰安放地。宣誓广场立有16位一级教授雕像与医学生誓言碑，新生入学在此宣誓。",
+                        link: "#east1"
+                    },
+                    {
+                        name: "医科图书馆（康泉图书馆）",
+                        image: "assets/images/buildings/medlib.png",
+                        description: "现代玻璃幕墙建筑，馆藏医学古籍与前沿数字资源，顶层观景台可俯瞰徐汇全景。",
+                        link: "#medlib"
+                    }
+                ]
+            },
+            zhangjiang: {
+                name: "张江校区",
+                subtitle: "复旦大学科技创新基地",
+                mainImage: "assets/images/buildings/zhangjiang-campus.png",
+                overview: "张江校区是复旦大学的科技创新基地，位于上海市浦东新区张江高科技园区，占地面积约800亩。这里集中了复旦大学的多个前沿科研机构和实验室，是学校开展高水平科学研究的重要平台。",
+                history: "张江校区始建于2000年代初期，是复旦大学响应国家科技创新战略而建设的新校区。校区位于张江高科技园区，与众多高科技企业和研究机构为邻，形成了产学研一体化的创新生态系统。近年来，张江校区在生命科学、信息技术、材料科学等领域取得了一系列重要研究成果，成为复旦大学科技创新的重要窗口。",
+                gallery: [],
+                buildings: [
+                    {
+                        name: "张江复旦国际创新中心",
+                        image: "assets/images/buildings/innovation.png",
+                        description: "2019年启用的科研高地，聚焦集成电路、生物医药等前沿领域，流线型建筑与实验室透明玻璃墙象征科技开放性。",
+                        link: "#innovation"
+                    },
+                    {
+                        name: "张江科学城地标",
+                        image: "assets/images/buildings/landmark.png",
+                        description: "张江校区新地标，科技创新的象征。建筑设计极具未来感，配备先进的科研实验设施，是产学研一体化平台和国际化学术交流中心。",
+                        link: "#landmark"
+                    }
+                ]
+            },
+            jiangwan: {
+                name: "江湾校区",
+                subtitle: "复旦大学的现代化校区",
+                mainImage: "assets/images/buildings/jiangwan-campus.png",
+                overview: "江湾校区是复旦大学的现代化校区，位于上海市杨浦区淞沪路2005号，占地面积约2300亩。这里环境优美，设施完善，是复旦大学发展的重要空间。",
+                history: "江湾校区始建于2000年，是复旦大学为适应发展需要而建设的新校区。校区规划布局合理，建筑风格现代而庄重，既保留了复旦传统的人文气息，又融入了现代化的设计理念。江湾校区的建成使复旦大学的办学空间得到了极大扩展，为学校的长远发展提供了有力保障。目前，江湾校区已成为复旦大学本科教育的重要基地，多个学院已迁入此处。",
+                gallery: [],
+                buildings: [
+                    {
+                        name: "法学楼群",
+                        image: "assets/images/buildings/law.png",
+                        description: "新古典主义建筑群，廖凯原法学楼采用红砖灰顶设计，与周围湿地生态融合，获绿色建筑认证。",
+                        link: "#law"
+                    },
+                    {
+                        name: "李兆基图书馆",
+                        image: "assets/images/buildings/lizhaoji-lib.png",
+                        description: "江湾校区标志性图书馆，现代化学习研究中心。总建筑面积约2.8万平方米，配备现代化的智能化管理系统和丰富的电子资源设施。",
+                        link: "#lizhaoji-lib"
+                    },
+                    {
+                        name: "廖凯原法学楼",
+                        image: "assets/images/buildings/liaokaiyuan-law.png",
+                        description: "法学院新教学科研大楼，融合中西方元素，配备现代化的模拟法庭、多功能学术报告厅和专业法学图书馆。",
+                        link: "#liaokaiyuan-law"
+                    }
+                ]
+            }
+        };
+
+        // 修改点击事件处理和滚动函数
+        document.addEventListener('DOMContentLoaded', function() {
+            const campusCards = document.querySelectorAll('.campus-card');
+            
+            campusCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const campusId = card.getAttribute('data-campus');
+                    showCampusBuildings(campusId);
+                    
+                    // 等待内容加载完成后再滚动
+                    setTimeout(() => {
+                        const targetSection = document.getElementById(`${campusId}-buildings`);
+                        if (targetSection) {
+                            targetSection.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }, 100);
+                });
+            });
+        });
+
+        // 显示建筑信息的函数
+        function showCampusBuildings(campusId) {
+            const campus = campusData[campusId];
+            if (!campus) return;
+
+            // 清除之前的内容
+            const contentArea = document.getElementById('buildings-content');
+            
+            // 创建校区建筑内容
+            const campusContent = `
+                <div class="campus-section" id="${campusId}-buildings">
+                    <h2>${campus.name}</h2>
+                    <p class="campus-description">${campus.overview}</p>
+                    
+                    <div class="buildings-grid">
+                        ${campus.buildings.map(building => `
+                            <div class="building-card">
+                                <img src="${building.image}" alt="${building.name}" class="building-image">
+                                <div class="building-info">
+                                    <h3>${building.name}</h3>
+                                    <p>${building.description}</p>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            contentArea.innerHTML = campusContent;
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复背景滚动
+        }
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        // 按ESC键关闭模态框
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html> 

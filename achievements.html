@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复旦大学 - 成就展示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* 综合布局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0; /* 移除为导航栏预留的空间 */
+        }
+
+        /* 移除导航条 */
+        .top-navbar {
+            display: none !important;
+        }
+        
+        /* 确保导航栏不占用空间 */
+        nav {
+            height: 0 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .page-header {
+            background-color: var(--fudan-red);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .achievement-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 40px;
+            overflow: hidden;
+            border-top: 4px solid var(--fudan-red);
+        }
+
+        .section-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            color: var(--fudan-red);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-header h2 i {
+            margin-right: 10px;
+        }
+
+        .section-content {
+            padding: 20px;
+        }
+
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-speed);
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-item .caption {
+            padding: 12px;
+            background-color: #f8f9fa;
+            font-size: 14px;
+                text-align: center;
+            }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: transform var(--transition-speed);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--fudan-red);
+            margin-bottom: 10px;
+        }
+
+        .stat-card .label {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .timeline-achievements {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline-achievements::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: var(--fudan-red);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--fudan-gold);
+            border: 4px solid var(--fudan-red);
+        }
+
+        .timeline-item .year {
+            font-weight: bold;
+            color: var(--fudan-red);
+            margin-bottom: 5px;
+        }
+
+        .timeline-item .content {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .timeline-item h3 {
+            margin-top: 0;
+            color: var(--fudan-blue);
+        }
+
+        .timeline-item p {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>复旦大学成就展示</h1>
+            <p>百廿光华，薪火相传</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 关键数据统计 -->
+        <div class="achievement-section">
+            <div class="section-header">
+                <h2><i class="fas fa-chart-line"></i> 关键数据统计</h2>
+            </div>
+            <div class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">120+</div>
+                        <div class="label">建校年数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">35</div>
+                        <div class="label">A类学科数量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">3000+</div>
+                        <div class="label">专职教师</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">30000+</div>
+                        <div class="label">在校学生</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">200+</div>
+                        <div class="label">国际合作院校</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">50+</div>
+                        <div class="label">国家重点学科</div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <!-- 学科评估柱状图 -->
+        <div class="achievement-section">
+            <div class="section-header">
+                <h2><i class="fas fa-graduation-cap"></i> 学科评估成果</h2>
+            </div>
+            <div class="section-content">
+                <div id="subjectChart" class="chart-container"></div>
+                    </div>
+                </div>
+
+        <!-- 科研突破组合图 -->
+        <div class="achievement-section">
+            <div class="section-header">
+                <h2><i class="fas fa-flask"></i> 科研经费与成果趋势</h2>
+            </div>
+            <div class="section-content">
+                <div id="researchChart" class="chart-container"></div>
+                    </div>
+                </div>
+
+        <!-- 重要成就时间线 -->
+        <div class="achievement-section">
+            <div class="section-header">
+                <h2><i class="fas fa-award"></i> 重要学术成就</h2>
+            </div>
+            <div class="section-content">
+                <div class="timeline-achievements">
+                    <div class="timeline-item">
+                        <div class="year">2023</div>
+                        <div class="content">
+                            <h3>国家自然科学奖一等奖</h3>
+                            <p>复旦大学物理学院研究团队因在量子物理领域的突破性研究获得国家自然科学奖一等奖，这是该领域近十年来的重要突破。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="year">2022</div>
+                        <div class="content">
+                            <h3>医学领域重大突破</h3>
+                            <p>复旦大学附属中山医院团队在肝癌早期诊断技术方面取得重大突破，相关成果发表于《自然·医学》杂志。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="year">2021</div>
+                        <div class="content">
+                            <h3>人工智能新算法</h3>
+                            <p>复旦大学计算机科学技术学院开发的新型深度学习算法在国际人工智能竞赛中获得冠军，引领行业发展方向。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="year">2020</div>
+                        <div class="content">
+                            <h3>新冠疫情防控贡献</h3>
+                            <p>复旦大学公共卫生学院团队在新冠疫情防控中做出重要贡献，相关研究成果为国家防疫政策提供了科学依据。</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="year">2019</div>
+                        <div class="content">
+                            <h3>国家社科基金重大项目</h3>
+                            <p>复旦大学历史学系承担的"中国古代文明起源与早期发展"项目获国家社科基金重大项目立项，填补学术空白。</p>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- 国际交流部分 -->
+        <div class="achievement-section" id="international">
+            <h2 class="section-title">国际交流</h2>
+            <p class="section-description">复旦大学积极开展国际学术交流与合作，与世界一流大学建立了广泛的合作关系</p>
+            
+            <div class="gallery">
+                <div class="gallery-item">
+                    <img src="assets/images/international1.png" alt="复旦-哈佛学术交流会议">
+                    <div class="gallery-caption">
+                        <h4>复旦-哈佛学术交流会议</h4>
+                        <p>促进中美学术交流的重要平台</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/international2.png" alt="复旦大学国际学术周">
+                    <div class="gallery-caption">
+                        <h4>复旦大学国际学术周</h4>
+                        <p>汇聚全球学者共同探讨学术前沿</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/international3.png" alt="复旦-牛津联合研究中心">
+                    <div class="gallery-caption">
+                        <h4>复旦-牛津联合研究中心</h4>
+                        <p>深化中英学术合作与交流</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/international4.png" alt="国际学生文化交流活动">
+                    <div class="gallery-caption">
+                        <h4>国际学生文化交流活动</h4>
+                        <p>促进多元文化交流与理解</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/international5.png" alt="复旦大学国际合作论坛">
+                    <div class="gallery-caption">
+                        <h4>复旦大学国际合作论坛</h4>
+                        <p>推动国际合作与政策研究</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="assets/images/international6.png" alt="联合国气候变化大会COP28">
+                    <div class="gallery-caption">
+                        <h4>联合国气候变化大会COP28</h4>
+                        <p>参与全球气候治理国际研讨</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人才培养成果 -->
+        <div class="achievement-section">
+            <div class="section-header">
+                <h2><i class="fas fa-user-graduate"></i> 人才培养成果</h2>
+                </div>
+            <div class="section-content">
+                <div id="talentChart" class="chart-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 图片自动加载器
+        function loadGallery(imagePaths, containerId) {
+            const gallery = document.getElementById(containerId);
+            
+            // 使用提供的图片路径
+            imagePaths.forEach((item, index) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = item.src;
+                imgElement.alt = item.alt || "复旦大学国际交流";
+                
+                const caption = document.createElement('div');
+                caption.className = 'caption';
+                caption.textContent = item.caption || `国际合作项目 ${index + 1}`;
+                
+                galleryItem.appendChild(imgElement);
+                galleryItem.appendChild(caption);
+                gallery.appendChild(galleryItem);
+            });
+        }
+
+        // 学科评估柱状图
+        const subjectChart = echarts.init(document.getElementById('subjectChart'));
+        const subjectOption = {
+            color: ['#9e1f14', '#d4af37'],
+            title: { 
+                text: 'A类学科数量对比 (2020-2024)', 
+                left: 'center',
+                textStyle: {
+                    color: '#333'
+                }
+            },
+            tooltip: { 
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {
+                data: ['第四轮评估', '第五轮评估'],
+                bottom: 10
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                top: '15%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['文科', '理科', '工科', '医科', '交叉学科']
+            },
+            yAxis: { 
+                type: 'value',
+                name: '学科数量'
+            },
+            series: [{
+                name: '第四轮评估',
+                type: 'bar',
+                data: [12, 15, 8, 10, 5],
+                itemStyle: { color: '#9e1f14' },
+                emphasis: {
+                    itemStyle: {
+                        color: '#7a180f'
+                    }
+                }
+            },{
+                name: '第五轮评估',
+                type: 'bar',
+                data: [14, 18, 9, 12, 7],
+                itemStyle: { color: '#d4af37' },
+                emphasis: {
+                    itemStyle: {
+                        color: '#b89328'
+                    }
+                }
+            }]
+        };
+
+        // 科研经费与成果趋势图
+        const researchChart = echarts.init(document.getElementById('researchChart'));
+        const researchOption = {
+            color: ['#9e1f14', '#d4af37'],
+            title: { 
+                text: '科研经费与获奖趋势', 
+                left: 'center',
+                textStyle: {
+                    color: '#333'
+                }
+            },
+            tooltip: { 
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                }
+            },
+            legend: {
+                data: ['科研经费(亿元)', '获奖数量'],
+                bottom: 10
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '15%',
+                top: '15%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['2020', '2021', '2022', '2023', '2024'],
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            yAxis: [
+                { 
+                    type: 'value',
+                    name: '科研经费(亿元)',
+                    position: 'left'
+                }, 
+                { 
+                    type: 'value',
+                    name: '获奖数量',
+                    position: 'right'
+                }
+            ],
+            series: [{
+                name: '科研经费(亿元)',
+                type: 'line',
+                data: [85, 92, 98, 105, 118],
+                yAxisIndex: 0,
+                symbolSize: 8,
+                lineStyle: { 
+                    color: '#9e1f14', 
+                    width: 3 
+                },
+                itemStyle: {
+                    color: '#9e1f14'
+                }
+            },{
+                name: '获奖数量',
+                type: 'bar',
+                yAxisIndex: 1,
+                data: [120, 135, 142, 155, 165],
+                itemStyle: { color: '#d4af37' },
+                emphasis: {
+                    itemStyle: {
+                        color: '#b89328'
+                    }
+                }
+            }]
+        };
+
+        // 人才培养成果图
+        const talentChart = echarts.init(document.getElementById('talentChart'));
+        const talentOption = {
+            color: ['#9e1f14', '#1e3a8a', '#d4af37', '#4caf50', '#607d8b'],
+            title: {
+                text: '近五年毕业生去向分布',
+                left: 'center',
+                textStyle: {
+                    color: '#333'
+                }
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'horizontal',
+                bottom: 10,
+                data: ['国内深造', '出国留学', '就业', '创业', '其他']
+            },
+            series: [
+                {
+                    name: '毕业生去向',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: true,
+                        formatter: '{b}: {d}%',  // 显示名称和百分比
+                        position: 'outside',     // 标签位置在外部
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        color: '#333'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: 16,
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: true,              // 显示引导线
+                        length: 15,              // 第一段线长
+                        length2: 20,             // 第二段线长
+                        smooth: true             // 平滑引导线
+                    },
+                    data: [
+                        { value: 35, name: '国内深造' },
+                        { value: 20, name: '出国留学' },
+                        { value: 38, name: '就业' },
+                        { value: 5, name: '创业' },
+                        { value: 2, name: '其他' }
+                    ]
+                }
+            ]
+        };
+
+        // 初始化图表
+        subjectChart.setOption(subjectOption);
+        researchChart.setOption(researchOption);
+        talentChart.setOption(talentOption);
+
+        // 加载国际交流图片库
+        const internationalImages = [
+            { 
+                src: 'assets/images/international1.png', 
+                caption: '复旦-哈佛学术交流会议', 
+                alt: '复旦-哈佛学术交流' 
+            },
+            { 
+                src: 'assets/images/international2.png', 
+                caption: '复旦大学国际学术周', 
+                alt: '国际学术周活动' 
+            },
+            { 
+                src: 'assets/images/international3.png', 
+                caption: '复旦-牛津联合研究中心', 
+                alt: '复旦-牛津合作项目' 
+            },
+            { 
+                src: 'assets/images/international4.png', 
+                caption: '国际学生文化交流活动', 
+                alt: '国际学生交流' 
+            },
+            { 
+                src: 'assets/images/international5.png', 
+                caption: '复旦大学国际合作论坛', 
+                alt: '国际合作论坛' 
+            },
+            { 
+                src: 'assets/images/international6.png', 
+                caption: '联合国气候变化大会COP28', 
+                alt: '国际研讨会' 
+            }
+        ];
+
+        // 响应式调整
+        window.addEventListener('resize', function() {
+            subjectChart.resize();
+            researchChart.resize();
+            talentChart.resize();
+        });
+
+        // 加载国际交流图片库
+        loadGallery(internationalImages, 'internationalGallery');
+    </script>
+</body>
+</html> 

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复旦大学 - 杰出校友</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        .page-header {
+            background-color: var(--fudan-red);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .alumni-section {
+            padding: 50px 0;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .alumni-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .alumni-header h2 {
+            color: var(--fudan-red);
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .alumni-header p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .alumni-categories {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category-btn.active {
+            background-color: var(--fudan-red);
+            color: white;
+        }
+
+        .alumni-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .alumni-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .alumni-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .alumni-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+
+        .alumni-info {
+            padding: 20px;
+        }
+
+        .alumni-info h3 {
+            color: var(--fudan-blue);
+            font-size: 22px;
+            margin: 0 0 10px 0;
+        }
+
+        .alumni-info .field {
+            color: var(--fudan-red);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .alumni-info p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: white;
+            margin: 50px auto;
+            max-width: 900px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s;
+        }
+
+        .alumni-details {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .alumni-photo {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .alumni-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .alumni-bio {
+            padding: 20px;
+        }
+
+        .alumni-bio h2 {
+            color: var(--fudan-blue);
+            margin-bottom: 15px;
+        }
+
+        .alumni-bio .field {
+            color: var(--fudan-red);
+            margin-bottom: 20px;
+        }
+
+        .alumni-bio .description {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: var(--fudan-red);
+        }
+
+        @media (max-width: 768px) {
+            .alumni-details {
+                grid-template-columns: 1fr;
+            }
+
+            .alumni-photo {
+                max-height: 400px;
+            }
+
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+    </style>
+</head>
+<body>
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>复旦大学杰出校友</h1>
+            <p>桃李满天下，复旦人才辈出</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="alumni-section">
+            <div class="alumni-categories">
+                <button class="category-btn active" data-category="all">全部</button>
+                <button class="category-btn" data-category="science">科技领域</button>
+                <button class="category-btn" data-category="culture">文化艺术</button>
+                <button class="category-btn" data-category="business">商界领袖</button>
+                <button class="category-btn" data-category="politics">政界</button>
+                <button class="category-btn" data-category="medical">医学</button>
+            </div>
+
+            <div class="alumni-grid" id="alumniGrid">
+                <!-- 校友卡片将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 校友详情模态框 -->
+    <div id="alumniModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAlumniModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="alumni-details" id="alumniDetails">
+                <!-- 校友详细信息将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 校友数据
+        const alumniData = {
+            science: [
+                {
+                    id: 'subuqing',
+                    name: '苏步青',
+                    field: '科技领域 - 数学家',
+                    image: 'assets/images/alumni/subuqing.png',
+                    description: '中国科学院院士，创立微分几何学派，曾任复旦大学校长，获国家自然科学奖等荣誉。在数学领域做出重要贡献，培养了大批优秀人才。'
+                },
+                {
+                    id: 'xiexide',
+                    name: '谢希德',
+                    field: '科技领域 - 物理学家',
+                    image: 'assets/images/alumni/xiexide.png',
+                    description: '中国科学院院士，复旦大学原校长，中国半导体物理和表面物理研究的开拓者。为中国物理学发展做出重要贡献。'
+                },
+                {
+                    id: 'zhangshoushen',
+                    name: '张首晟',
+                    field: '科技领域 - 物理学家',
+                    image: 'assets/images/alumni/zhangshoushen.png',
+                    description: '发现"天使粒子"（手性Majorana费米子），曾任斯坦福大学教授，在理论物理领域取得重大突破。'
+                },
+                {
+                    id: 'liuchong',
+                    name: '刘翀',
+                    field: '科技领域 - 化学家',
+                    image: 'assets/images/alumni/liu.png',
+                    description: '2024年斯隆研究奖得主，芝加哥大学教授，在可持续元素分离技术研究方面取得重要成果。'
+                },
+                {
+                    id: 'wangwei',
+                    name: '王炜',
+                    field: '科技领域 - 计算机科学家',
+                    image: 'assets/images/alumni/wangwei.png',
+                    description: 'CDP集团创始人，复旦大学计算机系校友，致力于推动人力资源服务行业数字化转型。'
+                },
+                {
+                    id: 'chenkaixian',
+                    name: '陈凯先',
+                    field: '科技领域 - 药学家',
+                    image: 'assets/images/alumni/chenkaixian.png',
+                    description: '中国科学院院士，在药物创新研究领域做出重要贡献，推动中国药学发展。'
+                }
+            ],
+            culture: [
+                {
+                    id: 'xubeihong',
+                    name: '徐悲鸿',
+                    field: '文化艺术 - 画家',
+                    image: 'assets/images/alumni/xubeihong.png',
+                    description: '画家、美术教育家，曾就读于复旦大学，融合中西绘画技法，代表作《田横五百士》等。在中国现代美术教育史上有重要地位。'
+                },
+                {
+                    id: 'chenyinque',
+                    name: '陈寅恪',
+                    field: '文化艺术 - 历史学家',
+                    image: 'assets/images/alumni/chenyinque.png',
+                    description: '历史学家、古典文学研究家、语言学家、诗人。在中国历史研究和文学研究领域做出重大贡献。'
+                },
+                {
+                    id: 'jinchongji',
+                    name: '金冲及',
+                    field: '文化艺术 - 历史学家',
+                    image: 'assets/images/alumni/jinchongji.png',
+                    description: '中共党史研究权威，主编《毛泽东传》《周恩来传》等重要著作，为中国现代史研究做出重要贡献。'
+                },
+                {
+                    id: 'hongying',
+                    name: '虹影',
+                    field: '文化艺术 - 作家',
+                    image: 'assets/images/alumni/hongying.png',
+                    description: '代表作《饥饿的女儿》《K》等，中国新女性文学代表，其作品被翻译成多种语言在国际上产生重要影响。'
+                }
+            ],
+            business: [
+                {
+                    id: 'chenzengtao',
+                    name: '陈曾焘',
+                    field: '商界领袖 - 恒隆集团联合创始人',
+                    image: 'assets/images/alumni/chen.png',
+                    description: '恒隆集团联合创始人，复旦大学校董，捐建"恒隆物理楼""思源奖助学金"等，是香港商界的传奇人物。'
+                },
+                {
+                    id: 'chentianqiao',
+                    name: '陈天桥',
+                    field: '商界领袖 - 全国工商联执委',
+                    title: '全国工商联执委，上海市工商联副主席',
+                    image: 'assets/images/alumni/chentianqiao.png',
+                    description: '上海市工商联副主席、上海市青联副主席，1993年毕业于复旦大学。',
+                    achievements: [
+                        '全国工商联执委',
+                        '上海市工商联副主席',
+                        '上海市青联副主席'
+                    ]
+                },
+                {
+                    id: 'guoguangchang',
+                    name: '郭广昌',
+                    field: '商界领袖 - 复星集团创始人',
+                    title: '复星创始人',
+                    image: 'assets/images/alumni/guoguangchang.png',
+                    description: '复星创始人，曾任上海市工商业联合会副主席，1999年毕业于复旦大学管理学院。',
+                    achievements: [
+                        '复星集团创始人',
+                        '上海市工商业联合会副主席',
+                        '知名企业家'
+                    ]
+                },
+                {
+                    id: 'like',
+                    name: '李柯',
+                    field: '商界领袖 - 比亚迪股份副总裁',
+                    title: '比亚迪股份副总裁',
+                    image: 'assets/images/alumni/like.png',
+                    description: '现任比亚迪股份副总裁，信息披露委员会委员，比亚迪慈善基金会副理事长，1992年毕业于复旦大学。',
+                    achievements: [
+                        '比亚迪股份副总裁',
+                        '信息披露委员会委员',
+                        '比亚迪慈善基金会副理事长'
+                    ]
+                }
+            ],
+            politics: [
+                {
+                    id: 'wanghuning',
+                    name: '王沪宁',
+                    field: '政界 - 政治局常委',
+                    image: 'assets/images/alumni/wanghuning.png',
+                    description: '中共中央政治局常委，复旦大学国际政治系校友，政治学与法学领域学者。'
+                },
+                {
+                    id: 'dingxuexiang',
+                    name: '丁薛祥',
+                    field: '政界 - 国务院副总理',
+                    image: 'assets/images/alumni/dingxuexiang.png',
+                    description: '国务院副总理，复旦大学管理学院校友，长期参与国家科技与政策制定。'
+                },
+                {
+                    id: 'lilanqing',
+                    name: '李岚清',
+                    field: '政界 - 原国务院副总理',
+                    image: 'assets/images/alumni/lilanqing.png',
+                    description: '原国务院副总理，复旦大学校友，推动中国教育改革与经济发展。'
+                },
+                {
+                    id: 'gongxueping',
+                    name: '龚学平',
+                    field: '政界 - 上海市原人大常委会主任',
+                    image: 'assets/images/alumni/gongxueping.png',
+                    description: '上海市原人大常委会主任，复旦大学校友，参与地方立法与治理。'
+                }
+            ],
+            medical: [
+                {
+                    id: 'yanfuqing',
+                    name: '颜福庆',
+                    field: '医学 - 医学教育家',
+                    image: 'assets/images/alumni/yanfuqing.png',
+                    description: '医学教育家，公共卫生学家，复旦大学上海医学院创办者，为中国现代医学教育做出重要贡献。'
+                },
+                {
+                    id: 'zhangwenhong',
+                    name: '张文宏',
+                    field: '医学 - 传染病学专家',
+                    image: 'assets/images/alumni/zhangwenhong.png',
+                    description: '传染病学专家，复旦大学上海医学院内科学系主任，在抗击新冠疫情中发挥重要作用。'
+                },
+                {
+                    id: 'tenggaojun',
+                    name: '滕皋军',
+                    field: '医学 - 中国科学院院士',
+                    title: '中国科学院院士',
+                    image: 'assets/images/alumni/tenggaojun.png',
+                    description: '中国科学院院士，东南大学医学与生命科学部主任，东南大学附属中大医院院长，2003年获复旦大学影像学博士学位。',
+                    achievements: [
+                        '中国科学院院士',
+                        '东南大学医学与生命科学部主任',
+                        '东南大学附属中大医院院长'
+                    ]
+                },
+                {
+                    id: 'tang',
+                    name: '汤钊猷',
+                    field: '医学 - 中国工程院院士',
+                    title: '中国工程院院士',
+                    image: 'assets/images/alumni/tang.png',
+                    description: '中国工程院院士，复旦大学肝癌研究所所长、教授、博士生导师，毕业于国立上海医学院(现复旦大学上海医学院)。',
+                    achievements: [
+                        '中国工程院院士',
+                        '复旦大学肝癌研究所所长',
+                        '著名肝癌研究专家'
+                    ]
+                }
+            ]
+        };
+
+        // 显示校友列表函数
+        function showAlumni(category = 'all') {
+            const alumniGrid = document.getElementById('alumniGrid');
+            let alumniToShow = [];
+            
+            if (category === 'all') {
+                Object.values(alumniData).forEach(categoryAlumni => {
+                    alumniToShow = alumniToShow.concat(categoryAlumni);
+                });
+            } else {
+                alumniToShow = alumniData[category] || [];
+            }
+
+            const alumniHTML = alumniToShow.map(alumni => `
+                <div class="alumni-card" onclick="showAlumniDetails('${alumni.id}')">
+                    <img src="${alumni.image}" alt="${alumni.name}" class="alumni-image">
+                    <div class="alumni-info">
+                        <h3>${alumni.name}</h3>
+                        <div class="field">${alumni.field}</div>
+                        <p>${alumni.description.substring(0, 100)}...</p>
+                    </div>
+                </div>
+            `).join('');
+
+            alumniGrid.innerHTML = alumniHTML;
+        }
+
+        // 显示校友详情函数
+        function showAlumniDetails(alumniId) {
+            const modal = document.getElementById('alumniModal');
+            const detailsContainer = document.getElementById('alumniDetails');
+            
+            let selectedAlumni = null;
+            Object.values(alumniData).forEach(category => {
+                const found = category.find(a => a.id === alumniId);
+                if (found) selectedAlumni = found;
+            });
+
+            if (selectedAlumni) {
+                detailsContainer.innerHTML = `
+                    <div class="alumni-photo">
+                        <img src="${selectedAlumni.image}" alt="${selectedAlumni.name}">
+                    </div>
+                    <div class="alumni-bio">
+                        <h2>${selectedAlumni.name}</h2>
+                        <div class="field">${selectedAlumni.field}</div>
+                        <div class="description">${selectedAlumni.description}</div>
+                    </div>
+                `;
+                modal.style.display = 'block';
+            }
+        }
+
+        // 关闭校友详情模态框
+        function closeAlumniModal() {
+            const modal = document.getElementById('alumniModal');
+            modal.style.display = 'none';
+        }
+
+        // 添加类别切换事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // 更新按钮状态
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // 显示对应类别的校友
+                    const category = button.getAttribute('data-category');
+                    showAlumni(category);
+                });
+            });
+
+            // 初始显示所有校友
+            showAlumni();
+        });
+
+        // 点击模态框外部关闭
+        window.addEventListener('click', (event) => {
+            if (event.target.classList.contains('modal')) {
+                closeAlumniModal();
+            }
+        });
+
+        // 按ESC键关闭模态框
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeAlumniModal();
+            }
+        });
+    </script>
+</body>
+</html> 

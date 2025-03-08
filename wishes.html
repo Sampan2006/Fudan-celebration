@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝福墙 - 复旦120周年</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .wishes-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 20px;
+        }
+
+        .wishes-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .wishes-title {
+            color: var(--fudan-blue);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .wishes-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .wishes-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .wishes-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 表单样式 */
+        .wish-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: var(--fudan-red);
+            outline: none;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .tag-option {
+            padding: 0.5rem 1rem;
+            border: 2px solid #eee;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tag-option:hover {
+            border-color: var(--fudan-red);
+            color: var(--fudan-red);
+        }
+
+        .tag-option.selected {
+            background: var(--fudan-red);
+            border-color: var(--fudan-red);
+            color: white;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--fudan-red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: var(--fudan-blue);
+            transform: translateY(-2px);
+        }
+
+        /* 祝福展示区域 */
+        .wishes-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            align-content: start;
+        }
+
+        .wish-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s;
+        }
+
+        .wish-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .wish-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .wish-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--fudan-red);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+        }
+
+        .wish-info {
+            flex: 1;
+        }
+
+        .wish-author {
+            font-weight: 500;
+            color: var(--fudan-blue);
+            margin: 0;
+        }
+
+        .wish-date {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .wish-tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            color: var(--fudan-red);
+            margin-bottom: 0.8rem;
+        }
+
+        .wish-content {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .wish-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            color: var(--fudan-red);
+        }
+
+        .action-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* 弹幕区域 */
+        .danmaku-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .danmaku {
+            position: absolute;
+            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 20px;
+            animation: danmaku-move 15s linear;
+        }
+
+        @keyframes danmaku-move {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* 分享弹窗 */
+        .share-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .share-preview {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .share-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .share-btn.primary {
+            background: var(--fudan-red);
+            color: white;
+        }
+
+        .share-btn.secondary {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .user-menu {
+            position: relative;
+            margin-left: 1rem;
+        }
+
+        .user-dropdown {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .user-dropdown:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: white;
+        }
+
+        .user-identity {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.5rem;
+            background: var(--fudan-red);
+            border-radius: 10px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-top: 0.5rem;
+            z-index: 1000;
+        }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background: #f8f9fa;
+            color: var(--fudan-red);
+        }
+
+        .my-wishes-section {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .section-header {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .section-filters {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            color: var(--fudan-blue);
+            font-weight: 500;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .filter-select:focus {
+            border-color: var(--fudan-red);
+            outline: none;
+        }
+
+        .section-stats {
+            display: flex;
+            justify-content: flex-end;
+            color: #666;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .wish-card.highlight {
+            border: 2px solid var(--fudan-red);
+            animation: highlight-pulse 2s infinite;
+        }
+
+        @keyframes highlight-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
+        }
+
+        .wish-card .special-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--fudan-red);
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100%) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .comment-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .comment-list {
+            margin-top: 0.5rem;
+        }
+
+        .comment-item {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            color: var(--fudan-blue);
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .comment-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .comment-submit {
+            padding: 0.5rem 1rem;
+            background: var(--fudan-red);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 50px;
+                left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
+        <div class="nav-links">
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
+            <div class="user-menu" id="userMenu">
+                <div class="user-dropdown">
+                    <span class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">访客</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wishes-container">
+        <div class="wishes-header">
+            <h1 class="wishes-title">祝福墙</h1>
+            <p class="wishes-subtitle">
+                在这里留下您对母校的祝福与期望，与全球复旦人共同庆祝120周年校庆。
+                每一条祝福都将成为复旦历史长河中的一颗璀璨星辰。
+            </p>
+        </div>
+
+        <div class="wishes-content">
+            <!-- 祝福表单 -->
+            <div class="wish-form">
+                <div class="form-group">
+                    <label class="form-label">您的称呼</label>
+                    <input type="text" class="form-input" id="wishAuthor" placeholder="请输入您的姓名或昵称（选填）">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">选择主题标签</label>
+                    <div class="tags-container">
+                        <div class="tag-option" data-tag="光华岁月">光华岁月</div>
+                        <div class="tag-option" data-tag="相辉长存">相辉长存</div>
+                        <div class="tag-option" data-tag="桃李天下">桃李天下</div>
+                        <div class="tag-option" data-tag="追忆往昔">追忆往昔</div>
+                        <div class="tag-option" data-tag="展望未来">展望未来</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">祝福内容</label>
+                    <textarea class="form-input form-textarea" id="wishContent" placeholder="写下您对母校的祝福"></textarea>
+                </div>
+
+                <button class="submit-btn" onclick="submitWish()">
+                    <i class="fas fa-paper-plane"></i> 发送祝福
+                </button>
+            </div>
+
+            <!-- 祝福展示区 -->
+            <div class="wishes-section">
+                <div class="section-header">
+                    <div class="section-filters">
+                        <div class="filter-group">
+                            <label class="filter-label">排序方式</label>
+                            <select class="filter-select" id="sortSelect">
+                                <option value="latest">最新发布</option>
+                                <option value="popular">最受欢迎</option>
+                                <option value="friends">好友祝福</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">筛选标签</label>
+                            <select class="filter-select" id="tagSelect">
+                                <option value="all">全部标签</option>
+                                <option value="光华岁月">光华岁月</option>
+                                <option value="相辉长存">相辉长存</option>
+                                <option value="桃李天下">桃李天下</option>
+                                <option value="追忆往昔">追忆往昔</option>
+                                <option value="展望未来">展望未来</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section-stats">
+                        <span class="stat-item">
+                            <i class="fas fa-heart"></i>
+                            今日剩余点赞次数：<span id="remainingLikes">10</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="wishes-display" id="wishesDisplay">
+                    <!-- 祝福卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 弹幕容器 -->
+    <div class="danmaku-container" id="danmakuContainer"></div>
+
+    <!-- 分享弹窗 -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <h2>分享您的祝福</h2>
+            <div class="share-preview" id="sharePreview">
+                <!-- 预览内容将通过JavaScript生成 -->
+            </div>
+            <div class="share-buttons">
+                <button class="share-btn primary" onclick="shareToWeChat()">
+                    <i class="fab fa-weixin"></i> 分享到微信
+                </button>
+                <button class="share-btn secondary" onclick="closeShareModal()">
+                    <i class="fas fa-times"></i> 关闭
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <script>
+        // 示例祝福数据
+        const wishes = [
+            {
+                author: "复旦校友",
+                content: "愿母校桃李芬芳，光辉历久弥新。在新的百年征程中，继续培育栋梁之才，为国家发展贡献力量！",
+                tag: "光华岁月",
+                date: "2024-03-15",
+                likes: 128
+            },
+            {
+                author: "张明",
+                content: "忆往昔相辉堂前的点点滴滴，愿母校继往开来，再创辉煌。祝福复旦120周年生日快乐！",
+                tag: "追忆往昔",
+                date: "2024-03-14",
+                likes: 96
+            },
+            {
+                author: "李华",
+                content: "在复旦的求学岁月是人生最美好的回忆，祝愿母校继续引领教育创新，培养更多优秀人才！",
+                tag: "桃李天下",
+                date: "2024-03-13",
+                likes: 85
+            }
+        ];
+
+        // 用户管理相关功能
+        const userState = {
+            isLoggedIn: true,
+            userData: {
+                name: '访客'
+            }
+        };
+
+        // 更新用户界面
+        function updateUserInterface() {
+            const userName = document.getElementById('userName');
+            userName.textContent = userState.userData.name;
+        }
+
+        // 检查每日点赞次数
+        function checkDailyLikes() {
+            const today = new Date().toDateString();
+            if (userState.dailyLikes.date !== today) {
+                userState.dailyLikes.date = today;
+                userState.dailyLikes.count = 0;
+            }
+            document.getElementById('remainingLikes').textContent = 
+                userState.dailyLikes.max - userState.dailyLikes.count;
+        }
+
+        // 提交祝福前检查
+        function canSubmitWish() {
+            if (!userState.isLoggedIn) {
+                alert('请先登录后再发表祝福');
+                redirectToLogin();
+                return false;
+            }
+
+            const lastWishTime = localStorage.getItem(`lastWishTime_${userState.userData.name}`);
+            if (lastWishTime) {
+                const timeDiff = Date.now() - parseInt(lastWishTime);
+                if (timeDiff < 24 * 60 * 60 * 1000) { // 24小时内
+                    alert('每位用户每天只能发表一条祝福');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 修改提交祝福函数
+        function submitWish() {
+            if (!canSubmitWish()) return;
+
+            const author = userState.userData.name;
+            const content = document.getElementById('wishContent').value;
+            const selectedTag = document.querySelector('.tag-option.selected');
+            
+            if (!content) {
+                alert('请输入祝福内容！');
+                return;
+            }
+
+            if (!selectedTag) {
+                alert('请选择一个主题标签！');
+                return;
+            }
+
+            const newWish = {
+                id: Date.now(),
+                author,
+                content,
+                tag: selectedTag.dataset.tag,
+                date: new Date().toISOString().split('T')[0],
+                likes: 0,
+                identity: userState.userData.identity
+            };
+
+            wishes.unshift(newWish);
+            localStorage.setItem(`lastWishTime_${author}`, Date.now().toString());
+            renderWishes();
+            
+            // 清空表单
+            document.getElementById('wishContent').value = '';
+            selectedTag.classList.remove('selected');
+
+            // 添加到弹幕
+            addDanmaku(content);
+        }
+
+        // 修改点赞功能
+        function likeWish(btn) {
+            if (!userState.isLoggedIn) {
+                alert('请先登录后再点赞');
+                redirectToLogin();
+                return;
+            }
+
+            const today = new Date().toDateString();
+            if (userState.dailyLikes.date !== today) {
+                userState.dailyLikes.date = today;
+                userState.dailyLikes.count = 0;
+            }
+
+            if (userState.dailyLikes.count >= userState.dailyLikes.max) {
+                alert('您今日的点赞次数已达上限，请明天再来！');
+                return;
+            }
+
+            const wishCard = btn.closest('.wish-card');
+            const wishId = wishCard.dataset.wishId;
+            const likedBy = JSON.parse(localStorage.getItem(`wish_${wishId}_likes`) || '[]');
+            const likeCount = btn.querySelector('span');
+            const icon = btn.querySelector('i');
+
+            if (likedBy.includes(userState.userData.name)) {
+                // 取消点赞
+                const index = likedBy.indexOf(userState.userData.name);
+                likedBy.splice(index, 1);
+                icon.classList.replace('fas', 'far');
+                icon.style.color = '';
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                userState.dailyLikes.count--;
+            } else {
+                // 添加点赞
+                likedBy.push(userState.userData.name);
+                icon.classList.replace('far', 'fas');
+                icon.style.color = 'var(--fudan-red)';
+                likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                userState.dailyLikes.count++;
+
+                // 检查是否触发特效
+                const likes = parseInt(likeCount.textContent);
+                if (likes >= 50) {
+                    triggerSpecialEffect(wishCard);
+                }
+            }
+
+            localStorage.setItem(`wish_${wishId}_likes`, JSON.stringify(likedBy));
+            checkDailyLikes();
+        }
+
+        // 特效展示
+        function triggerSpecialEffect(wishCard) {
+            // 添加高亮效果
+            wishCard.classList.add('highlight');
+            
+            // 创建彩带效果
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+                wishCard.appendChild(confetti);
+                
+                confetti.addEventListener('animationend', () => {
+                    wishCard.removeChild(confetti);
+                });
+            }
+        }
+
+        // 排序和筛选
+        document.getElementById('sortSelect').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+            let sortedWishes = [...wishes];
+            
+            switch (sortBy) {
+                case 'latest':
+                    sortedWishes.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'popular':
+                    sortedWishes.sort((a, b) => b.likes - a.likes);
+                    break;
+                case 'friends':
+                    // 这里可以添加好友系统的逻辑
+                    sortedWishes = sortedWishes.filter(wish => 
+                        userState.userData?.friends?.includes(wish.author));
+                    break;
+            }
+            
+            renderWishes(sortedWishes);
+        });
+
+        document.getElementById('tagSelect').addEventListener('change', (e) => {
+            const selectedTag = e.target.value;
+            const filteredWishes = selectedTag === 'all' 
+                ? wishes 
+                : wishes.filter(wish => wish.tag === selectedTag);
+            renderWishes(filteredWishes);
+        });
+
+        // 评论功能
+        function addComment(wishId, content) {
+            if (!userState.isLoggedIn) {
+                alert('请先登录后再评论');
+                redirectToLogin();
+                return;
+            }
+
+            const comments = JSON.parse(localStorage.getItem(`wish_${wishId}_comments`) || '[]');
+            const newComment = {
+                author: userState.userData.name,
+                content: content,
+                date: new Date().toISOString(),
+                status: 'pending' // pending, approved, rejected
+            };
+            
+            comments.push(newComment);
+            localStorage.setItem(`wish_${wishId}_comments`, JSON.stringify(comments));
+            
+            // 刷新评论显示
+            renderComments(wishId);
+        }
+
+        function renderComments(wishId) {
+            const comments = JSON.parse(localStorage.getItem(`wish_${wishId}_comments`) || '[]');
+            const approvedComments = comments.filter(comment => comment.status === 'approved');
+            
+            const commentList = document.querySelector(`#wish-${wishId} .comment-list`);
+            commentList.innerHTML = approvedComments.map(comment => `
+                <div class="comment-item">
+                    <span class="comment-author">${comment.author}:</span>
+                    <span class="comment-content">${comment.content}</span>
+                </div>
+            `).join('');
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            // 渲染祝福卡片
+            renderWishes();
+            // 初始化标签选择
+            initTagSelection();
+            // 启动弹幕
+            startDanmaku();
+            // 更新用户界面
+            updateUserInterface();
+            checkDailyLikes();
+        });
+
+        // 渲染祝福卡片
+        function renderWishes() {
+            const container = document.getElementById('wishesDisplay');
+            container.innerHTML = wishes.map(wish => `
+                <div class="wish-card">
+                    <div class="wish-header">
+                        <div class="wish-avatar">
+                            ${wish.author.charAt(0)}
+                        </div>
+                        <div class="wish-info">
+                            <h3 class="wish-author">${wish.author}</h3>
+                            <div class="wish-date">${wish.date}</div>
+                        </div>
+                    </div>
+                    <div class="wish-tag">${wish.tag}</div>
+                    <p class="wish-content">${wish.content}</p>
+                    <div class="wish-actions">
+                        <button class="action-btn" onclick="likeWish(this)">
+                            <i class="far fa-heart"></i>
+                            <span>${wish.likes}</span>
+                        </button>
+                        <button class="action-btn" onclick="shareWish(this)">
+                            <i class="fas fa-share-alt"></i>
+                            分享
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 初始化标签选择
+        function initTagSelection() {
+            const tags = document.querySelectorAll('.tag-option');
+            tags.forEach(tag => {
+                tag.addEventListener('click', () => {
+                    tags.forEach(t => t.classList.remove('selected'));
+                    tag.classList.add('selected');
+                });
+            });
+        }
+
+        // 分享功能
+        function shareWish(btn) {
+            const wishCard = btn.closest('.wish-card');
+            const content = wishCard.querySelector('.wish-content').textContent;
+            const author = wishCard.querySelector('.wish-author').textContent;
+            
+            const shareModal = document.getElementById('shareModal');
+            const sharePreview = document.getElementById('sharePreview');
+            
+            sharePreview.innerHTML = `
+                <p><strong>${author}的祝福：</strong></p>
+                <p>${content}</p>
+            `;
+            
+            shareModal.style.display = 'flex';
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').style.display = 'none';
+        }
+
+        function shareToWeChat() {
+            alert('请截图分享到微信');
+        }
+
+        // 弹幕功能
+        function startDanmaku() {
+            wishes.forEach(wish => {
+                setTimeout(() => addDanmaku(wish.content), Math.random() * 5000);
+            });
+        }
+
+        function addDanmaku(content) {
+            const container = document.getElementById('danmakuContainer');
+            const danmaku = document.createElement('div');
+            danmaku.className = 'danmaku';
+            danmaku.textContent = content;
+            danmaku.style.top = Math.random() * 70 + 15 + '%';
+            container.appendChild(danmaku);
+            
+            danmaku.addEventListener('animationend', () => {
+                container.removeChild(danmaku);
+            });
+        }
+    </script>
+</body>
+</html> 

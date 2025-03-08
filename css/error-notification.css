@@ -1,0 +1,94 @@
+/* 错误提示样式 */
+.error-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffe3e6;
+  border: 2px solid #ff6b6b;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.5s ease;
+  max-width: 90%;
+}
+
+.error-notification span {
+  font-size: 1.5rem;
+}
+
+.error-notification p {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.error-notification button {
+  background: var(--fudan-red, #9e1f14);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.3s;
+  font-weight: bold;
+}
+
+.error-notification button.close-btn {
+  background: #666;
+  padding: 0.3rem 0.8rem;
+}
+
+.error-notification button:hover {
+  opacity: 0.8;
+}
+
+/* 加载状态指示器 */
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--fudan-red, #9e1f14);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .error-notification {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  .error-notification p {
+    margin-bottom: 0.5rem;
+  }
+  
+  .error-notification button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+} 

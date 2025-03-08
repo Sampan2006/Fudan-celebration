@@ -1,0 +1,143 @@
+{
+    "discipline": {
+        "title": "复旦大学学科评估情况",
+        "description": "第四轮学科评估A类学科数量",
+        "labels": ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-"],
+        "data": [12, 8, 5, 7, 4, 3, 2, 1, 0],
+        "colors": ["#9e1f14", "#c42b1c", "#e84c3d", "#3498db", "#5dade2", "#85c1e9", "#aed6f1", "#d6eaf8", "#ebf5fb"],
+        "comparison": {
+            "labels": ["复旦大学", "北京大学", "清华大学", "上海交通大学", "浙江大学"],
+            "data": [25, 30, 28, 22, 24]
+        }
+    },
+    "research": {
+        "title": "科研经费与成果",
+        "description": "近五年科研经费与重大成果数量",
+        "years": ["2019", "2020", "2021", "2022", "2023"],
+        "funding": {
+            "label": "科研经费（亿元）",
+            "data": [28.5, 30.2, 32.8, 35.6, 38.9],
+            "color": "#9e1f14"
+        },
+        "papers": {
+            "label": "SCI论文数量",
+            "data": [5200, 5600, 6100, 6500, 7200],
+            "color": "#1e3a8a"
+        },
+        "patents": {
+            "label": "专利授权数",
+            "data": [420, 480, 550, 620, 710],
+            "color": "#d4af37"
+        },
+        "awards": {
+            "label": "国家级奖项",
+            "data": [15, 18, 22, 25, 30],
+            "color": "#2ecc71"
+        }
+    },
+    "international": {
+        "title": "国际交流与合作",
+        "description": "国际合作项目与留学生情况",
+        "years": ["2019", "2020", "2021", "2022", "2023"],
+        "programs": {
+            "label": "国际合作项目数",
+            "data": [180, 165, 190, 220, 250],
+            "color": "#9e1f14"
+        },
+        "students": {
+            "label": "留学生人数",
+            "data": [3200, 2800, 3000, 3500, 4000],
+            "color": "#1e3a8a"
+        },
+        "partners": {
+            "label": "合作院校数",
+            "data": [210, 220, 235, 250, 270],
+            "color": "#d4af37"
+        },
+        "countries": {
+            "title": "留学生来源国家/地区分布",
+            "labels": ["亚洲", "欧洲", "北美洲", "南美洲", "非洲", "大洋洲"],
+            "data": [55, 20, 15, 4, 3, 3],
+            "colors": ["#9e1f14", "#1e3a8a", "#d4af37", "#2ecc71", "#3498db", "#9b59b6"]
+        }
+    },
+    "alumni": [
+        {
+            "name": "李政道",
+            "title": "诺贝尔物理学奖获得者",
+            "description": "1957年获诺贝尔物理学奖，因发现宇称不守恒原理而闻名于世。",
+            "image": "assets/images/alumni/lizd.jpg",
+            "achievements": ["诺贝尔物理学奖", "美国科学院院士", "中国科学院外籍院士"],
+            "contribution": "发现宇称不守恒原理，为物理学带来革命性突破"
+        },
+        {
+            "name": "杨振宁",
+            "title": "诺贝尔物理学奖获得者",
+            "description": "1957年获诺贝尔物理学奖，因发现宇称不守恒原理而闻名于世。",
+            "image": "assets/images/alumni/yangzn.jpg",
+            "achievements": ["诺贝尔物理学奖", "美国科学院院士", "中国科学院外籍院士"],
+            "contribution": "发现宇称不守恒原理，为物理学带来革命性突破"
+        },
+        {
+            "name": "陈竺",
+            "title": "血液学家、教育家",
+            "description": "中国工程院院士，曾任中国卫生部部长、中国红十字会会长。",
+            "image": "assets/images/alumni/chenzhu.jpg",
+            "achievements": ["中国工程院院士", "第十二届全国人大常委会副委员长", "中国红十字会会长"],
+            "contribution": "在血液学研究领域取得重大突破，推动中国医疗卫生事业发展"
+        },
+        {
+            "name": "王沪宁",
+            "title": "政治学家",
+            "description": "复旦大学国际政治系教授，中央政策研究室主任。",
+            "image": "assets/images/alumni/wanghn.jpg",
+            "achievements": ["中共中央政治局常委", "国家领导人", "复旦大学教授"],
+            "contribution": "在政治理论研究方面做出重要贡献，参与国家重大决策"
+        },
+        {
+            "name": "邵逸夫",
+            "title": "企业家、慈善家",
+            "description": "香港电影业先驱，邵氏电影公司创始人，著名慈善家。",
+            "image": "assets/images/alumni/shaoyi.jpg",
+            "achievements": ["邵氏电影公司创始人", "香港无线电视创办人", "著名慈善家"],
+            "contribution": "捐资助学，支持中国教育事业发展，设立邵逸夫奖"
+        },
+        {
+            "name": "李开复",
+            "title": "人工智能专家、创新工场创始人",
+            "description": "曾任微软全球副总裁、谷歌中国区总裁，现为创新工场董事长兼CEO。",
+            "image": "assets/images/alumni/likaifu.jpg",
+            "achievements": ["微软全球副总裁", "谷歌中国区总裁", "创新工场创始人"],
+            "contribution": "推动人工智能技术发展，培养众多科技创业人才"
+        },
+        {
+            "name": "张文宏",
+            "title": "传染病学专家",
+            "description": "复旦大学附属华山医院感染科主任，新冠疫情防控专家组组长。",
+            "image": "assets/images/alumni/zhangwh.jpg",
+            "achievements": ["复旦大学附属华山医院感染科主任", "上海市新冠肺炎医疗救治专家组组长", "中华医学会感染病学分会副主任委员"],
+            "contribution": "在新冠疫情防控中发挥重要作用，科普传染病防治知识"
+        },
+        {
+            "name": "钟南山",
+            "title": "呼吸病学专家",
+            "description": "中国工程院院士，国家呼吸系统疾病临床医学研究中心主任。",
+            "image": "assets/images/alumni/zhongns.jpg",
+            "achievements": ["中国工程院院士", "国家呼吸系统疾病临床医学研究中心主任", "抗击SARS和新冠疫情的领军人物"],
+            "contribution": "在SARS和新冠疫情防控中做出杰出贡献，推动呼吸系统疾病研究"
+        }
+    ],
+    "disciplines": {
+        "a": 25,
+        "b": 15,
+        "others": 12
+    },
+    "researchFunding": {
+        "years": ["2019", "2020", "2021", "2022", "2023"],
+        "amounts": [28.5, 30.2, 32.8, 35.6, 38.9]
+    },
+    "awards": {
+        "categories": ["国家级", "省部级", "国际奖项"],
+        "counts": [45, 78, 12]
+    }
+} 
