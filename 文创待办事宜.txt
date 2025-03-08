@@ -1,3 +1,10 @@
+网址： https://sampan2006.github.io/Fudan-celebration/
+修改H5代码后，bash输入：
+git add .
+git commit -m "更新 H5 页面"
+git push origin main
+自动更新
+
 1. 社交分享缩略图
 2. 您需要添加一个复旦大学的logo图片到assets/images/fudan-logo.png，我已经创建了一个占位符文件提醒这一点。
 3.攀登游戏素材：

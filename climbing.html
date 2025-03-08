@@ -248,6 +248,45 @@
             --fudan-red: #b71c1c;
             --card-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
+
+        /* 添加天气控制按钮样式 */
+        .weather-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .weather-btn {
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .weather-btn:hover {
+            background: #666;
+        }
+
+        .weather-btn.active {
+            background: #0066cc;
+        }
+
+        .weather-btn i {
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
@@ -266,13 +305,13 @@
     <!-- 角色选择界面 -->
     <div class="character-selector" id="characterSelector">
         <div class="character-option" data-role="student">
-            <img src="assets/images/student.png" alt="复旦学子">
+            <img src="assets/images/climbing-game/characters/student.png" alt="复旦学子">
             <h3>复旦学子</h3>
             <p>擅长学术攀登<br>可以使用双跳能力</p>
             <button class="select-btn">选择学子</button>
         </div>
         <div class="character-option" data-role="cat">
-            <img src="assets/images/academic-cat.png" alt="学术喵">
+            <img src="assets/images/climbing-game/characters/academic-cat.png" alt="学术喵">
             <h3>学术喵</h3>
             <p>灵活敏捷<br>可以使用墙壁跳跃</p>
             <button class="select-btn">选择学术喵</button>
@@ -319,6 +358,19 @@
             <circle cx="16" cy="16" r="10" fill="#b71c1c"/>
             <text x="16" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-family="Arial">复</text>
         </svg>
+    </div>
+
+    <!-- 添加天气控制按钮 -->
+    <div class="weather-controls">
+        <button class="weather-btn" onclick="toggleWeather('snow')" id="snowBtn">
+            <i class="fas fa-snowflake"></i> 雪花效果
+        </button>
+        <button class="weather-btn" onclick="toggleWeather('rain')" id="rainBtn">
+            <i class="fas fa-cloud-rain"></i> 雨滴效果
+        </button>
+        <button class="weather-btn" onclick="toggleWeather('wind')" id="windBtn">
+            <i class="fas fa-wind"></i> 风力效果
+        </button>
     </div>
 
     <script src="js/climbing-game.js"></script>
@@ -453,7 +505,11 @@
 
         // 初始化游戏
         window.addEventListener('load', () => {
+            // 显示菜单
+            document.getElementById('menuOverlay').style.display = 'flex';
+            // 初始化角色选择
             initCharacterSelection();
+            // 初始化触控控制
             enhanceTouchControls();
         });
 
@@ -500,15 +556,55 @@
             }
         });
 
-        function startGame() {
-            const script = document.createElement('script');
-            script.src = 'game.js';
-            document.body.appendChild(script);
+        function startGame(role) {
+            // 保存选择的角色
+            localStorage.setItem('selectedCharacter', role);
+            
+            // 确保游戏容器可见
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('characterSelector').style.display = 'none';
+            
+            // 如果游戏实例已存在，销毁它
+            if (window.game) {
+                window.game.destroy(true);
+            }
+            
+            // 创建新的游戏实例
+            window.game = new Phaser.Game(gameConfig);
         }
 
         function showLeaderboard() {
             // 实现排行榜显示逻辑
         }
+
+        // 天气效果控制
+        function toggleWeather(effect) {
+            if (!window.gameState || !window.gameState.weatherSystem) return;
+            
+            const btn = document.getElementById(effect + 'Btn');
+            btn.classList.toggle('active');
+            
+            window.gameState.weatherSystem.toggleEffect(effect);
+        }
+
+        // 键盘控制风向
+        document.addEventListener('keydown', (e) => {
+            if (!window.gameState || !window.gameState.weatherEffects.wind) return;
+            
+            if (e.key === 'ArrowLeft') {
+                window.gameState.weatherEffects.windForce = -0.5;
+            } else if (e.key === 'ArrowRight') {
+                window.gameState.weatherEffects.windForce = 0.5;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (!window.gameState || !window.gameState.weatherEffects.wind) return;
+            
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                window.gameState.weatherEffects.windForce = 0;
+            }
+        });
     </script>
 </body>
 </html> 

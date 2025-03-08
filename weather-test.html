@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天气效果测试</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #1a1a1a, #4a4a4a);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1001;
+        }
+
+        .controls button {
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .controls button:hover {
+            background: #666;
+        }
+
+        .controls button.active {
+            background: #0066cc;
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1001;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button onclick="toggleSnow()" id="snowBtn">雪花效果</button>
+        <button onclick="toggleRain()" id="rainBtn">雨滴效果</button>
+    </div>
+    <div class="instructions">
+        使用键盘方向键控制风向：<br>
+        ← 向左吹风<br>
+        → 向右吹风
+    </div>
+
+    <script src="js/weather-effects.js"></script>
+    <script>
+        let weatherSystem;
+        let showSnow = true;
+        let showRain = true;
+
+        // 初始化天气系统
+        window.addEventListener('load', () => {
+            weatherSystem = new WeatherSystem();
+        });
+
+        // 切换雪花效果
+        function toggleSnow() {
+            showSnow = !showSnow;
+            document.getElementById('snowBtn').classList.toggle('active');
+            weatherSystem.snowCanvas.style.display = showSnow ? 'block' : 'none';
+        }
+
+        // 切换雨滴效果
+        function toggleRain() {
+            showRain = !showRain;
+            document.getElementById('rainBtn').classList.toggle('active');
+            weatherSystem.rainCanvas.style.display = showRain ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html> 
