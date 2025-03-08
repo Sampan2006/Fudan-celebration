@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>光华攀登 - 复旦120周年</title>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         * {
             margin: 0;
@@ -287,6 +289,50 @@
         .weather-btn i {
             font-size: 1.2em;
         }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 60px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 50px;
+                left: 10px;
+            }
+
+            .game-container {
+                margin: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -294,11 +340,14 @@
     <div class="building-silhouette"></div>
 
     <nav class="top-navbar">
-        <a href="index.html" class="site-logo">复旦120周年</a>
+        <a href="index.html" class="site-logo">
+            <i class="fas fa-university"></i> 复旦120周年
+        </a>
         <div class="nav-links">
-            <a href="index.html">首页</a>
-            <a href="directory.html">内容目录</a>
-            <a href="games.html">趣味游戏</a>
+            <a href="index.html"><i class="fas fa-home"></i> 首页</a>
+            <a href="directory.html"><i class="fas fa-list"></i> 内容目录</a>
+            <a href="timeline.html"><i class="fas fa-history"></i> 历史时间轴</a>
+            <a href="achievements.html"><i class="fas fa-award"></i> 成就展示</a>
         </div>
     </nav>
 
@@ -360,18 +409,22 @@
         </svg>
     </div>
 
-    <!-- 添加天气控制按钮 -->
+    <!-- 修改天气控制按钮，添加data-effect属性 -->
     <div class="weather-controls">
-        <button class="weather-btn" onclick="toggleWeather('snow')" id="snowBtn">
+        <button class="weather-btn" data-effect="snow" id="snowBtn">
             <i class="fas fa-snowflake"></i> 雪花效果
         </button>
-        <button class="weather-btn" onclick="toggleWeather('rain')" id="rainBtn">
+        <button class="weather-btn" data-effect="rain" id="rainBtn">
             <i class="fas fa-cloud-rain"></i> 雨滴效果
         </button>
-        <button class="weather-btn" onclick="toggleWeather('wind')" id="windBtn">
+        <button class="weather-btn" data-effect="wind" id="windBtn">
             <i class="fas fa-wind"></i> 风力效果
         </button>
     </div>
+
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
 
     <script src="js/climbing-game.js"></script>
     <script>
@@ -380,54 +433,12 @@
             student: {
                 jumpForce: -600,
                 doubleJump: true,
-                special: 'academicShield' // 学术护盾
+                special: 'academicShield'
             },
             cat: {
                 jumpForce: -700,
                 doubleJump: false,
-                special: 'wallJump' // 墙壁跳跃
-            }
-        };
-
-        // 初始化角色选择系统
-        function initCharacterSelection() {
-            document.querySelectorAll('.select-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const role = this.parentElement.dataset.role;
-                    localStorage.setItem('selectedCharacter', role);
-                    document.querySelector('.character-selector').style.display = 'none';
-                    startGame(role);
-                });
-            });
-        }
-
-        // 增强型游戏配置
-        const enhancedConfig = {
-            scene: {
-                create: function() {
-                    // 初始化动态难度系统
-                    this.difficultyLevel = 1;
-                    this.obstacleSpawnRate = 2000;
-
-                    // 获取选择的角色
-                    this.selectedCharacter = localStorage.getItem('selectedCharacter') || 'student';
-                    this.loadCharacterAssets();
-
-                    // 环境效果初始化
-                    this.initWeatherEffects();
-                    
-                    // 智能平台生成算法
-                    this.platformGenerationStrategy = {
-                        baseSpacing: 150,
-                        maxOffset: 300,
-                        dynamicAdjust: (currentHeight) => {
-                            return Math.max(100, 300 - currentHeight * 0.1);
-                        }
-                    };
-
-                    // 初始化问答系统
-                    this.initQuizSystem();
-                }
+                special: 'wallJump'
             }
         };
 
@@ -444,6 +455,25 @@
             }
         };
 
+        // 校史问答题目库
+        const quizQuestions = [
+            {
+                question: "复旦校训是什么？",
+                options: ["博学而笃志", "自强不息", "厚德载物"],
+                answer: 0
+            },
+            {
+                question: "光华楼建成时间？",
+                options: ["2005", "2010", "2015"],
+                answer: 0
+            },
+            {
+                question: "复旦大学创建于哪一年？",
+                options: ["1905", "1911", "1925"],
+                answer: 0
+            }
+        ];
+
         // 对象池管理
         class ObjectPool {
             constructor(game, config) {
@@ -458,8 +488,7 @@
             }
 
             acquire(key) {
-                const pool = this.pools.get(key);
-                return pool.get();
+                return this.pools.get(key).get();
             }
 
             release(obj) {
@@ -467,17 +496,7 @@
             }
         }
 
-        // 初始化音频上下文
-        let audioContext;
-        document.getElementById('startButton').addEventListener('click', function() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            document.getElementById('menuOverlay').style.display = 'none';
-            document.getElementById('characterSelector').style.display = 'flex';
-        });
-
-        // 增强移动端控制
+        // 增强触摸控制
         function enhanceTouchControls() {
             const gameArea = document.getElementById('gameContainer');
             let touchStartX = 0;
@@ -486,123 +505,159 @@
             gameArea.addEventListener('touchstart', e => {
                 touchStartX = e.touches[0].clientX;
                 touchStartTime = Date.now();
-            });
+            }, { passive: true });
 
             gameArea.addEventListener('touchmove', e => {
                 const deltaX = e.touches[0].clientX - touchStartX;
-                if (Math.abs(deltaX) > 30) {
-                    game.events.emit('move', deltaX > 0 ? 'right' : 'left');
+                if (Math.abs(deltaX) > 10) {
+                    if (window.game && window.game.scene.scenes[0].player) {
+                        window.game.scene.scenes[0].player.setVelocityX(deltaX > 0 ? 200 : -200);
+                    }
                 }
-            });
+            }, { passive: true });
 
             gameArea.addEventListener('touchend', () => {
                 const duration = Date.now() - touchStartTime;
-                if (duration < 200) {
-                    game.events.emit('jump');
+                if (duration < 200 && window.game && window.game.scene.scenes[0].player) {
+                    window.game.scene.scenes[0].player.jump();
                 }
-            });
+            }, { passive: true });
         }
 
-        // 初始化游戏
-        window.addEventListener('load', () => {
-            // 显示菜单
-            document.getElementById('menuOverlay').style.display = 'flex';
-            // 初始化角色选择
-            initCharacterSelection();
-            // 初始化触控控制
-            enhanceTouchControls();
-        });
-
-        // 将SVG转换为图像数据
-        function svgToImageData(svgElement) {
+        // SVG加载函数
+        async function loadSVG(svgId) {
             return new Promise((resolve, reject) => {
-                const svgString = new XMLSerializer().serializeToString(svgElement);
+                const svg = document.getElementById(svgId);
+                if (!svg) {
+                    reject(new Error(`SVG element with id ${svgId} not found`));
+                    return;
+                }
+                const svgData = new XMLSerializer().serializeToString(svg);
                 const img = new Image();
                 img.onload = () => resolve(img);
                 img.onerror = reject;
-                img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+                img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
             });
         }
 
-        // 初始化游戏资源
-        async function initGameAssets() {
-            const assets = {};
-            const svgElements = {
-                player: document.getElementById('playerSvg'),
-                platform: document.getElementById('platformSvg'),
-                badge: document.getElementById('badgeSvg')
-            };
-
-            for (const [key, element] of Object.entries(svgElements)) {
-                try {
-                    const img = await svgToImageData(element);
-                    assets[key] = img.src;
-                } catch (error) {
-                    console.error(`Error loading ${key}:`, error);
-                }
-            }
-
-            window.gameAssets = assets;
-            return assets;
+        // 排行榜功能
+        function showLeaderboard() {
+            const records = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+            const sorted = records.sort((a, b) => b.score - a.score).slice(0, 10);
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'game-overlay';
+            overlay.style.display = 'flex';
+            
+            const content = document.createElement('div');
+            content.className = 'game-menu';
+            content.innerHTML = `
+                <h2 class="menu-title">光华攀登排行榜</h2>
+                <div class="menu-content">
+                    ${sorted.map((r, i) => `
+                        <div class="leaderboard-item">
+                            <span class="rank">${i + 1}</span>
+                            <span class="name">${r.name}</span>
+                            <span class="score">${r.score}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="menu-buttons">
+                    <button class="menu-btn primary-btn" onclick="this.closest('.game-overlay').remove()">关闭</button>
+                </div>
+            `;
+            
+            overlay.appendChild(content);
+            document.body.appendChild(overlay);
         }
 
-        // 等待资源加载完成后启动游戏
-        window.addEventListener('load', async () => {
-            try {
-                await initGameAssets();
-                document.getElementById('menuOverlay').style.display = 'flex';
-            } catch (error) {
-                console.error('Error initializing game assets:', error);
-            }
-        });
-
+        // 开始游戏
         function startGame(role) {
-            // 保存选择的角色
             localStorage.setItem('selectedCharacter', role);
-            
-            // 确保游戏容器可见
             document.getElementById('gameContainer').style.display = 'block';
             document.getElementById('characterSelector').style.display = 'none';
             
-            // 如果游戏实例已存在，销毁它
             if (window.game) {
                 window.game.destroy(true);
             }
             
-            // 创建新的游戏实例
             window.game = new Phaser.Game(gameConfig);
-        }
-
-        function showLeaderboard() {
-            // 实现排行榜显示逻辑
         }
 
         // 天气效果控制
         function toggleWeather(effect) {
-            if (!window.gameState || !window.gameState.weatherSystem) return;
-            
-            const btn = document.getElementById(effect + 'Btn');
+            const btn = document.getElementById(`${effect}Btn`);
             btn.classList.toggle('active');
             
-            window.gameState.weatherSystem.toggleEffect(effect);
+            if (window.game && window.game.scene.scenes[0]) {
+                const scene = window.game.scene.scenes[0];
+                if (scene.weatherSystem) {
+                    scene.weatherSystem.toggleEffect(effect);
+                }
+            }
         }
+
+        // 初始化
+        window.addEventListener('load', async () => {
+            try {
+                // 显示菜单
+                document.getElementById('menuOverlay').style.display = 'flex';
+                
+                // 初始化角色选择
+                document.querySelectorAll('.select-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const role = this.parentElement.dataset.role;
+                        startGame(role);
+                    });
+                });
+
+                // 初始化天气控制
+                document.querySelectorAll('.weather-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const effect = this.dataset.effect;
+                        toggleWeather(effect);
+                    });
+                });
+
+                // 初始化触控控制
+                enhanceTouchControls();
+
+                // 初始化音频上下文
+                document.getElementById('startButton').addEventListener('click', function() {
+                    if (!window.audioContext) {
+                        window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    }
+                    document.getElementById('menuOverlay').style.display = 'none';
+                    document.getElementById('characterSelector').style.display = 'flex';
+                });
+
+            } catch (error) {
+                console.error('Error initializing game:', error);
+            }
+        });
 
         // 键盘控制风向
         document.addEventListener('keydown', (e) => {
-            if (!window.gameState || !window.gameState.weatherEffects.wind) return;
-            
-            if (e.key === 'ArrowLeft') {
-                window.gameState.weatherEffects.windForce = -0.5;
-            } else if (e.key === 'ArrowRight') {
-                window.gameState.weatherEffects.windForce = 0.5;
+            if (window.game && window.game.scene.scenes[0]) {
+                const scene = window.game.scene.scenes[0];
+                if (scene.weatherEffects && scene.weatherEffects.wind) {
+                    if (e.key === 'ArrowLeft') {
+                        scene.weatherEffects.windForce = -0.5;
+                    } else if (e.key === 'ArrowRight') {
+                        scene.weatherEffects.windForce = 0.5;
+                    }
+                }
             }
         });
 
         document.addEventListener('keyup', (e) => {
-            if (!window.gameState || !window.gameState.weatherEffects.wind) return;
-            
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                window.gameState.weatherEffects.windForce = 0;
+            if (window.game && window.game.scene.scenes[0]) {
+                const scene = window.game.scene.scenes[0];
+                if (scene.weatherEffects && scene.weatherEffects.wind) {
+                    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                        scene.weatherEffects.windForce = 0;
+                    }
+                }
             }
         });
     </script>
