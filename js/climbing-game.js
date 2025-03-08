@@ -67,7 +67,10 @@ const gameConfig = {
             updateCamera: updateCamera,
             updateDifficulty: updateDifficulty,
             initTouchControls: initTouchControls,
-            gameOver: gameOver
+            gameOver: gameOver,
+            initQuizSystem: initQuizSystem,
+            showAnswerResult: showAnswerResult,
+            addReward: addReward
         }
     }
 };
@@ -159,9 +162,6 @@ function create() {
     
     console.log('玩家角色已创建:', selectedCharacter);
     
-    // 生成初始平台
-    this.generateInitialPlatforms();
-    
     // 设置碰撞
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.overlap(this.player, this.badges, this.collectBadge, null, this);
@@ -189,6 +189,9 @@ function create() {
     // 初始化天气系统
     this.weatherSystem = new WeatherSystem(this);
     gameState.weatherSystem = this.weatherSystem;
+    
+    // 生成初始平台
+    this.generateInitialPlatforms();
     
     // 初始化问答系统
     this.initQuizSystem();
