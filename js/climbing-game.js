@@ -43,10 +43,15 @@ class Badge extends Phaser.GameObjects.Sprite {
 
 // 游戏核心配置
 const gameConfig = {
-    type: Phaser.AUTO,
+    type: Phaser.CANVAS,  // 改为使用CANVAS渲染器
     width: 800,
     height: 600,
     parent: 'gameContainer',
+    canvas: (() => {
+        const canvas = document.createElement('canvas');
+        canvas.getContext('2d', { willReadFrequently: true });
+        return canvas;
+    })(),
     physics: {
         default: 'arcade',
         arcade: {
@@ -462,31 +467,40 @@ function generatePlatforms() {
 class WeatherSystem {
     constructor(scene) {
         this.scene = scene;
-        this.snowCanvas = document.createElement('canvas');
-        this.rainCanvas = document.createElement('canvas');
         
-        // 设置画布样式
-        [this.snowCanvas, this.rainCanvas].forEach(canvas => {
-            canvas.style.position = 'absolute';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.pointerEvents = 'none';
-            canvas.width = gameConfig.width;
-            canvas.height = gameConfig.height;
-            document.getElementById('gameContainer').appendChild(canvas);
-        });
-
-        // 获取上下文并设置willReadFrequently属性
-        this.sctx = this.snowCanvas.getContext('2d', { willReadFrequently: true });
-        this.rctx = this.rainCanvas.getContext('2d', { willReadFrequently: true });
+        // 创建天气效果画布
+        this.createWeatherCanvas('snow');
+        this.createWeatherCanvas('rain');
 
         // 初始化粒子
         this.snowflakes = Array(80).fill().map(() => new Snowflake(this));
         this.raindrops = Array(150).fill().map(() => new Raindrop(this));
+    }
 
-        // 设置初始显示状态
-        this.snowCanvas.style.display = 'none';
-        this.rainCanvas.style.display = 'none';
+    createWeatherCanvas(type) {
+        const canvas = document.createElement('canvas');
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.pointerEvents = 'none';
+        canvas.width = gameConfig.width;
+        canvas.height = gameConfig.height;
+        
+        const ctx = canvas.getContext('2d', { 
+            willReadFrequently: true,
+            alpha: true
+        });
+        
+        if (type === 'snow') {
+            this.snowCanvas = canvas;
+            this.sctx = ctx;
+        } else {
+            this.rainCanvas = canvas;
+            this.rctx = ctx;
+        }
+        
+        canvas.style.display = 'none';
+        document.getElementById('gameContainer').appendChild(canvas);
     }
 
     update() {
