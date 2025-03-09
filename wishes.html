@@ -127,43 +127,109 @@
             transform: translateY(-2px);
         }
 
-        /* 祝福展示区域 */
+        /* 修改祝福展示区域样式 */
         .wishes-display {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-            align-content: start;
+            position: relative;
+            padding: 20px 0;
+            margin: 0 auto;
+            max-width: 1000px;
         }
 
+        /* 时间轴中线 */
+        .wishes-display::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--fudan-blue), var(--fudan-red));
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        /* 祝福卡片新样式 */
         .wish-card {
+            position: relative;
+            width: calc(50% - 30px);
+            margin: 30px 0;
             background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 15px;
+            padding: 20px;
             box-shadow: var(--card-shadow);
-            transition: transform 0.3s;
+            transition: all 0.3s ease;
+            animation: slideIn 0.5s ease-out;
         }
 
-        .wish-card:hover {
-            transform: translateY(-5px);
+        /* 左右交错布局 */
+        .wish-card:nth-child(odd) {
+            float: left;
+            clear: both;
         }
 
+        .wish-card:nth-child(even) {
+            float: right;
+            clear: both;
+        }
+
+        /* 连接线 */
+        .wish-card::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 4px;
+            background: var(--fudan-red);
+        }
+
+        .wish-card:nth-child(odd)::before {
+            right: -50px;
+        }
+
+        .wish-card:nth-child(even)::before {
+            left: -50px;
+        }
+
+        /* 时间点装饰 */
+        .wish-card::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid var(--fudan-red);
+            box-shadow: 0 0 0 4px rgba(158, 31, 20, 0.2);
+        }
+
+        .wish-card:nth-child(odd)::after {
+            right: -60px;
+        }
+
+        .wish-card:nth-child(even)::after {
+            left: -60px;
+        }
+
+        /* 卡片内容样式优化 */
         .wish-header {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 15px;
         }
 
         .wish-avatar {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: var(--fudan-red);
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            margin-right: 1rem;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .wish-info {
@@ -171,9 +237,9 @@
         }
 
         .wish-author {
-            font-weight: 500;
+            font-size: 1.2rem;
             color: var(--fudan-blue);
-            margin: 0;
+            margin: 0 0 5px;
         }
 
         .wish-date {
@@ -183,46 +249,100 @@
 
         .wish-tag {
             display: inline-block;
-            padding: 0.3rem 0.8rem;
-            background: #f8f9fa;
+            padding: 5px 12px;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            color: white;
             border-radius: 15px;
             font-size: 0.9rem;
-            color: var(--fudan-red);
-            margin-bottom: 0.8rem;
+            margin: 10px 0;
         }
 
         .wish-content {
-            color: #333;
+            font-size: 1.1rem;
             line-height: 1.6;
-            margin-bottom: 1rem;
+            color: #333;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 10px;
         }
 
         .wish-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 1rem;
+            margin-top: 15px;
+            padding-top: 15px;
             border-top: 1px solid #eee;
         }
 
         .action-btn {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            gap: 8px;
+            padding: 8px 15px;
             border: none;
             background: none;
             color: #666;
             cursor: pointer;
             transition: all 0.3s;
+            border-radius: 20px;
         }
 
         .action-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
             color: var(--fudan-red);
         }
 
-        .action-btn i {
-            font-size: 1.1rem;
+        /* 动画效果 */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .wishes-display::before {
+                left: 30px;
+            }
+
+            .wish-card {
+                width: calc(100% - 60px);
+                float: right;
+                margin-left: 60px;
+            }
+
+            .wish-card::before {
+                left: -30px;
+                width: 30px;
+            }
+
+            .wish-card::after {
+                left: -40px;
+            }
+
+            .wish-card:nth-child(odd)::before,
+            .wish-card:nth-child(even)::before {
+                left: -30px;
+            }
+
+            .wish-card:nth-child(odd)::after,
+            .wish-card:nth-child(even)::after {
+                left: -40px;
+            }
+        }
+
+        /* 清除浮动 */
+        .wishes-display::after {
+            content: '';
+            display: table;
+            clear: both;
         }
 
         /* 弹幕区域 */
@@ -245,6 +365,12 @@
             background: rgba(0, 0, 0, 0.6);
             border-radius: 20px;
             animation: danmaku-move 15s linear;
+        }
+
+        .danmaku .author {
+            color: var(--fudan-red);
+            font-weight: bold;
+            margin-right: 8px;
         }
 
         @keyframes danmaku-move {
@@ -571,6 +697,104 @@
                 left: 10px;
             }
         }
+
+        /* 音乐控制按钮 */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .music-control:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .music-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .music-wave {
+            fill: var(--fudan-red);
+        }
+
+        .music-note {
+            fill: var(--fudan-red);
+        }
+
+        .music-control.playing .music-wave {
+            fill: var(--fudan-blue);
+        }
+
+        .music-control.playing .music-note {
+            fill: var(--fudan-blue);
+        }
+
+        /* 音乐提示样式 */
+        .music-tooltip {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: white;
+            color: var(--fudan-blue);
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-size: 15px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: var(--card-shadow);
+            border: 2px solid rgba(30, 58, 138, 0.1);
+        }
+
+        .music-tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .music-tooltip::before {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            right: 20px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            transform: rotate(45deg);
+            border-right: 2px solid rgba(30, 58, 138, 0.1);
+            border-bottom: 2px solid rgba(30, 58, 138, 0.1);
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .music-tooltip::after {
+            content: '🎵';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .music-tooltip {
+                bottom: 70px;
+                right: 10px;
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -695,6 +919,17 @@
     <a href="directory.html" class="back-to-directory">
         <i class="fas fa-home"></i> 返回目录
     </a>
+
+    <!-- 音乐提示元素 -->
+    <div class="music-tooltip" id="musicTooltip">点击播放背景音乐</div>
+    
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+        </svg>
+    </div>
 
     <script>
         // 示例祝福数据
@@ -1027,7 +1262,10 @@
         // 弹幕功能
         function startDanmaku() {
             wishes.forEach(wish => {
-                setTimeout(() => addDanmaku(wish.content), Math.random() * 5000);
+                setTimeout(() => {
+                    const content = `<span class="author">${wish.author}</span>${wish.content}`;
+                    addDanmaku(content);
+                }, Math.random() * 5000);
             });
         }
 
@@ -1035,7 +1273,7 @@
             const container = document.getElementById('danmakuContainer');
             const danmaku = document.createElement('div');
             danmaku.className = 'danmaku';
-            danmaku.textContent = content;
+            danmaku.innerHTML = content;  // 使用 innerHTML 来支持带样式的内容
             danmaku.style.top = Math.random() * 70 + 15 + '%';
             container.appendChild(danmaku);
             
@@ -1043,6 +1281,133 @@
                 container.removeChild(danmaku);
             });
         }
+
+        class AudioController {
+            constructor() {
+                this.audio = new Audio('assets/audio/wishes.mp3');
+                this.audio.loop = true;
+                this.isPlaying = false;
+                this.currentVolume = 0.5;
+                this.muted = true;
+                this.firstPlay = true;
+
+                this.initializeEventListeners();
+                this.loadPlaybackState();
+                this.showMusicTooltip();
+                console.log('Audio controller initialized');
+            }
+
+            showMusicTooltip() {
+                const tooltip = document.getElementById('musicTooltip');
+                if (tooltip && this.firstPlay) {
+                    tooltip.classList.add('show');
+                    
+                    // 3秒后自动隐藏提示
+                    setTimeout(() => {
+                        tooltip.classList.remove('show');
+                    }, 3000);
+
+                    // 点击音乐控制按钮后隐藏提示
+                    const musicControl = document.querySelector('.music-control');
+                    if (musicControl) {
+                        musicControl.addEventListener('click', () => {
+                            tooltip.classList.remove('show');
+                        }, { once: true });
+                    }
+                }
+            }
+
+            initializeEventListeners() {
+                const musicControl = document.querySelector('.music-control');
+                if (musicControl) {
+                    musicControl.addEventListener('click', () => this.togglePlayback());
+                }
+
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        if (this.isPlaying) {
+                            this.audio.pause();
+                        }
+                    } else {
+                        if (this.isPlaying && !this.firstPlay) {
+                            this.audio.play();
+                        }
+                    }
+                });
+
+                // 用户交互时开始播放
+                const startPlayback = () => {
+                    if (this.firstPlay) {
+                        this.firstPlay = false;
+                        this.startPlayWithFadeIn();
+                    }
+                };
+
+                ['click', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+                    document.addEventListener(event, startPlayback, { once: true });
+                });
+
+                // 音频事件监听
+                this.audio.addEventListener('play', () => {
+                    musicControl?.classList.add('playing');
+                    this.isPlaying = true;
+                    this.savePlaybackState();
+                });
+
+                this.audio.addEventListener('pause', () => {
+                    musicControl?.classList.remove('playing');
+                    this.isPlaying = false;
+                    this.savePlaybackState();
+                });
+            }
+
+            startPlayWithFadeIn() {
+                this.audio.volume = 0;
+                this.audio.play().then(() => {
+                    let vol = 0;
+                    const fadeIn = setInterval(() => {
+                        if (vol < this.currentVolume) {
+                            vol += 0.1;
+                            this.audio.volume = vol;
+                        } else {
+                            clearInterval(fadeIn);
+                        }
+                    }, 200);
+                }).catch(error => {
+                    console.error('播放失败:', error);
+                });
+            }
+
+            togglePlayback() {
+                if (this.firstPlay) {
+                    this.firstPlay = false;
+                    this.startPlayWithFadeIn();
+                } else if (this.isPlaying) {
+                    this.audio.pause();
+                } else {
+                    this.audio.play();
+                }
+            }
+
+            savePlaybackState() {
+                localStorage.setItem('audioPlaybackState', JSON.stringify({
+                    isPlaying: this.isPlaying,
+                    currentVolume: this.currentVolume
+                }));
+            }
+
+            loadPlaybackState() {
+                const savedState = localStorage.getItem('audioPlaybackState');
+                if (savedState) {
+                    const { isPlaying, currentVolume } = JSON.parse(savedState);
+                    this.currentVolume = currentVolume;
+                    this.audio.volume = this.currentVolume;
+                }
+            }
+        }
+
+        // 初始化音频控制器
+        const audioController = new AudioController();
     </script>
 </body>
 </html> 

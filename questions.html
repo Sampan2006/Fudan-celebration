@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复旦大学 - 校史问答</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        :root {
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+
+        /* 综合布局样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0;
+        }
+
+        /* 移除导航条 */
+        .top-navbar {
+            display: none !important;
+        }
+        
+        /* 确保导航栏不占用空间 */
+        nav {
+            height: 0 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .music-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--fudan-blue);
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .music-control:hover .music-icon {
+            fill: var(--fudan-red);
+        }
+
+        .music-control.playing .music-icon {
+            animation: rotate 5s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 页面特定样式 */
+        .page-header {
+            background-color: var(--fudan-red);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 问答区域样式 */
+        .qa-section {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .qa-item {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        .qa-item:last-child {
+            border-bottom: none;
+        }
+
+        .qa-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .question {
+            font-size: 18px;
+            color: var(--fudan-blue);
+            margin-bottom: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .answer {
+            color: #666;
+            line-height: 1.8;
+            margin-top: 15px;
+            display: none;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .answer.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .back-to-directory {
+                padding: 6px 12px;
+                font-size: 14px;
+                top: 10px;
+                left: 10px;
+            }
+
+            .qa-item {
+                padding: 15px;
+            }
+
+            .question {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 返回目录按钮 -->
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+        </svg>
+    </div>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>复旦大学校史问答</h1>
+            <p>了解复旦历史，传承复旦精神</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="qa-section">
+            <!-- 问答内容将通过JavaScript动态加载 -->
+        </div>
+    </div>
+
+    <script>
+        // 问答数据
+        const qaData = [
+            {
+                question: "复旦大学创办于哪一年？创办人是谁？",
+                answer: "复旦大学创办于1905年，创办人是马相伯先生。学校最初名为复旦公学，是中国人自主创办的第一所高等学府。"
+            },
+            {
+                question: "复旦大学的校名有什么含义？",
+                answer: "复旦的校名取自《尚书大传·虞夏传》中\"日月光华，旦复旦兮\"的句子，寓意光明日新、学术独立的办学理念。"
+            },
+            {
+                question: "复旦大学的校训是什么？",
+                answer: "复旦大学的校训是\"博学而笃志，切问而近思\"，出自《中庸》，强调既要博学广识，又要持之以恒；既要勤于问学，又要深入思考。"
+            }
+            // 可以继续添加更多问答
+        ];
+
+        // 加载问答内容
+        function loadQA() {
+            const qaSection = document.querySelector('.qa-section');
+            qaData.forEach((item, index) => {
+                const qaItem = document.createElement('div');
+                qaItem.className = 'qa-item';
+                qaItem.innerHTML = `
+                    <div class="question" onclick="toggleAnswer(${index})">
+                        ${item.question}
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="answer" id="answer-${index}">
+                        ${item.answer}
+                    </div>
+                `;
+                qaSection.appendChild(qaItem);
+            });
+        }
+
+        // 切换答案显示/隐藏
+        function toggleAnswer(index) {
+            const answer = document.getElementById(`answer-${index}`);
+            const question = answer.previousElementSibling;
+            const icon = question.querySelector('i');
+            
+            answer.classList.toggle('show');
+            icon.style.transform = answer.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', loadQA);
+    </script>
+
+    <!-- 音频控制器 -->
+    <script src="js/audio-controller.js"></script>
+</body>
+</html> 

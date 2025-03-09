@@ -3,92 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>复旦校史问答</title>
+    <title>复旦大学 - 校史知识问答</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         :root {
-            --fudan-blue: #1a237e;
-            --fudan-red: #b71c1c;
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            --gradient-start: #1a237e;
-            --gradient-end: #b71c1c;
+            --fudan-red: #9e1f14;
+            --fudan-blue: #1e3a8a;
+            --fudan-gold: #d4af37;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
         }
 
-        * {
+        /* 综合布局样式 */
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            margin-top: 0;
         }
 
-        body {
-            background-color: #f5f5f5;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .dynamic-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
-            opacity: 0.05;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        /* 移除导航条 */
         .top-navbar {
-            background: linear-gradient(to right, var(--fudan-blue), var(--fudan-red));
-            padding: 15px 30px;
+            display: none !important;
+        }
+        
+        /* 确保导航栏不占用空间 */
+        nav {
+            height: 0 !important;
+            min-height: 0 !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        /* 返回按钮样式 */
+        .back-to-directory {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background-color: var(--fudan-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-size: 16px;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .site-logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
+            justify-content: center;
             text-decoration: none;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 30px;
+        .back-to-directory:hover {
+            background-color: #152d6f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
+        .back-to-directory i {
+            margin-right: 8px;
+        }
+
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 1000;
+            cursor: pointer;
             transition: all 0.3s;
-            padding: 5px 15px;
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .nav-links a:hover {
-            background: rgba(255,255,255,0.2);
+        .music-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--fudan-blue);
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .music-control:hover .music-icon {
+            fill: var(--fudan-red);
+        }
+
+        .music-control.playing .music-icon {
+            animation: rotate 5s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 页面特定样式 */
+        .page-header {
+            background-color: var(--fudan-red);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .page-header p {
+            margin: 10px 0 0;
+            font-size: 18px;
+            opacity: 0.9;
         }
 
         .container {
             max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-            flex: 1;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
+        .quiz-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .quiz-question {
+            font-size: 20px;
+            color: var(--fudan-blue);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .quiz-options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .quiz-option {
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--fudan-blue);
+            background-color: #f8f9fa;
+        }
+
+        .quiz-option.selected {
+            border-color: var(--fudan-blue);
+            background-color: #e8f0fe;
+        }
+
+        .quiz-option.correct {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .quiz-option.wrong {
+            border-color: #dc3545;
+            background-color: #f8d7da;
+        }
+
+        .quiz-option-letter {
+            width: 30px;
+            height: 30px;
+            background-color: var(--fudan-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .quiz-controls {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .quiz-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--fudan-blue);
+            color: white;
+        }
+
+        .quiz-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .quiz-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .quiz-progress {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .quiz-feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .quiz-feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .quiz-feedback.wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .quiz-result {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .quiz-score {
+            font-size: 48px;
+            color: var(--fudan-blue);
+            margin-bottom: 20px;
+        }
+
+        .quiz-message {
+            font-size: 20px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 15px;
+            }
+
+            .quiz-container {
+                padding: 20px;
+            }
+
+            .quiz-question {
+                font-size: 18px;
+            }
+
+            .quiz-option {
+                padding: 12px;
+            }
+
+            .quiz-button {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        /* 开始页面样式 */
         .start-screen {
             display: flex;
             flex-direction: column;
@@ -131,13 +340,6 @@
             border-radius: 2px;
         }
 
-        .start-screen p {
-            color: #666;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-
         .challenge-info {
             display: flex;
             flex-direction: column;
@@ -162,18 +364,6 @@
 
         .challenge-stat:hover {
             transform: translateY(-5px);
-        }
-
-        .challenge-stat::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, var(--fudan-blue), var(--fudan-red));
-            opacity: 0.1;
-            z-index: 0;
         }
 
         .challenge-stat .stat-value {
@@ -210,39 +400,12 @@
             overflow: hidden;
         }
 
-        .start-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--fudan-red), var(--fudan-blue));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
         .start-btn:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 28px rgba(0,0,0,0.2);
         }
 
-        .start-btn:hover::before {
-            opacity: 1;
-        }
-
-        .start-btn span {
-            position: relative;
-            z-index: 1;
-        }
-
-        .quiz-container {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: var(--card-shadow);
-        }
-
+        /* 统计栏样式 */
         .stats-bar {
             display: flex;
             justify-content: space-around;
@@ -268,99 +431,14 @@
             font-size: 0.9rem;
         }
 
-        .question-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 1rem;
-            position: relative;
-        }
-
-        .question-text {
-            font-size: 1.2rem;
-            color: #333;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .option-btn {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            padding: 1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            text-align: left;
-            line-height: 1.4;
-        }
-
-        .option-btn:hover {
-            background: #e9ecef;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .option-btn.correct {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-
-        .option-btn.wrong {
-            background: #f44336;
-            color: white;
-            border-color: #f44336;
-        }
-
-        @media (max-width: 768px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .start-screen {
-                padding: 2rem 1rem;
-                gap: 2rem;
-            }
-            
-            .start-screen h1 {
-                font-size: 2.2rem;
-            }
-            
-            .challenge-stat {
-                padding: 1.5rem;
-            }
-            
-            .challenge-stat .stat-value {
-                font-size: 3rem;
-            }
-            
-            .challenge-stat .stat-label {
-                font-size: 1.2rem;
-            }
-            
-            .start-btn {
-                padding: 1rem 3rem;
-                font-size: 1.2rem;
-            }
-        }
-
         /* 结算页面样式 */
         .result-card {
             padding: 2rem;
             text-align: center;
             animation: fadeIn 0.5s ease;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
         }
 
         .result-header {
@@ -407,78 +485,9 @@
             margin: 2rem 0;
         }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 1rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 0.5rem;
-        }
-
-        .stat-label {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--fudan-blue);
-        }
-
         .stat-value.highlight {
             color: var(--fudan-red);
             font-size: 2rem;
-        }
-
-        .achievements-section {
-            margin: 2rem 0;
-        }
-
-        .achievements-section h3 {
-            color: var(--fudan-blue);
-            margin-bottom: 1rem;
-        }
-
-        .achievements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .achievement-card {
-            background: white;
-            border-radius: 12px;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            animation: slideUp 0.5s ease;
-        }
-
-        .achievement-icon {
-            font-size: 2rem;
-        }
-
-        .achievement-info {
-            text-align: left;
-        }
-
-        .achievement-name {
-            font-weight: bold;
-            color: var(--fudan-blue);
-            margin-bottom: 0.3rem;
-        }
-
-        .achievement-desc {
-            font-size: 0.9rem;
-            color: #666;
         }
 
         .result-actions {
@@ -528,82 +537,31 @@
             from { transform: translateY(-20px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .retry-btn {
-            background: transparent;
-            color: #666;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .retry-btn:hover {
-            color: var(--fudan-blue);
-            text-decoration: underline;
-        }
-
-        .back-btn {
-            position: fixed;
-            top: 80px;
-            left: 20px;
-            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-
-        .back-btn i {
-            font-size: 1.2rem;
-        }
-
-        @media (max-width: 768px) {
-            .back-btn {
-                top: 70px;
-                left: 10px;
-                padding: 8px 16px;
-                font-size: 0.9rem;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="dynamic-background"></div>
+    <!-- 返回目录按钮 -->
+    <a href="directory.html" class="back-to-directory">
+        <i class="fas fa-home"></i> 返回目录
+    </a>
 
-    <nav class="top-navbar">
-        <a href="index.html" class="site-logo">复旦校史问答</a>
-        <div class="nav-links">
-            <a href="index.html">首页</a>
-            <a href="directory.html">内容目录</a>
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+        </svg>
+    </div>
+
+    <div class="page-header">
+        <div class="container">
+            <h1>复旦大学校史知识问答</h1>
+            <p>测试你对复旦历史的了解</p>
         </div>
-    </nav>
-
-    <button onclick="window.location.href='directory.html'" class="back-btn">
-        <i class="fas fa-arrow-left"></i>
-        返回目录
-    </button>
+    </div>
 
     <div class="container">
+        <!-- 开始页面 -->
         <div class="start-screen" id="startScreen">
             <h1>今日挑战</h1>
             <div class="challenge-info">
@@ -617,6 +575,7 @@
             </div>
         </div>
 
+        <!-- 问答页面 -->
         <div class="quiz-container" id="quizContainer" style="display: none;">
             <div class="stats-bar">
                 <div class="stat-item">
@@ -632,22 +591,237 @@
                     <div class="stat-label">正确率</div>
                 </div>
             </div>
+            <div id="quizContent">
+                <!-- 问答内容将通过JavaScript动态加载 -->
+            </div>
+            <div class="quiz-controls">
+                <button id="submitButton" class="quiz-button" disabled>提交答案</button>
+                <div class="quiz-progress">问题 <span id="currentQuestion">1</span>/<span id="totalQuestions">10</span></div>
+            </div>
+            <div id="feedback" class="quiz-feedback"></div>
+        </div>
 
-            <div class="quiz-card" id="questionCard">
-                <div class="question-text" id="questionText">
-                    准备开始答题...
+        <!-- 结算页面 -->
+        <div id="quizResult" class="result-card" style="display: none;">
+            <div class="result-header">
+                <div class="result-icon">🏆</div>
+                <h2>挑战完成！</h2>
+                <div class="rank-badge">
+                    <span class="rank-name" id="rankName">校史达人</span>
+                    <span class="rank-desc" id="rankDesc">你对复旦历史了如指掌！</span>
                 </div>
-                <div class="media-question" id="mediaContainer" style="display: none;">
-                    <img class="media-image" id="questionImage" src="" alt="">
+            </div>
+            <div class="result-stats">
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <div class="stat-label">总分</div>
+                        <div class="stat-value highlight" id="finalScore">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">正确率</div>
+                        <div class="stat-value" id="finalAccuracy">0%</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">最高连击</div>
+                        <div class="stat-value" id="maxStreak">0</div>
+                    </div>
                 </div>
-                <div class="options-grid" id="optionsContainer">
-                    <!-- 选项将通过JavaScript动态生成 -->
-                </div>
+            </div>
+            <div class="result-actions">
+                <button class="action-btn primary" onclick="restartQuiz()">再次挑战</button>
+                <button class="action-btn secondary" onclick="window.location.href='directory.html'">返回目录</button>
             </div>
         </div>
     </div>
 
-    <script src="js/questions.js"></script>
-    <script src="js/quiz-game.js"></script>
+    <script>
+        // 问答数据
+        const quizData = [
+            {
+                question: "复旦大学创办于哪一年？",
+                options: ["1900年", "1905年", "1910年", "1915年"],
+                correct: 1
+            },
+            {
+                question: "复旦大学的创办人是谁？",
+                options: ["马相伯", "蔡元培", "李登辉", "胡适"],
+                correct: 0
+            },
+            {
+                question: "复旦大学的校名出自哪部古籍？",
+                options: ["《论语》", "《诗经》", "《尚书大传》", "《周易》"],
+                correct: 2
+            },
+            {
+                question: "复旦大学最初的校名是什么？",
+                options: ["复旦大学", "复旦公学", "复旦书院", "复旦学堂"],
+                correct: 1
+            },
+            {
+                question: "复旦大学的校训是什么？",
+                options: ["明德格物", "博学而笃志，切问而近思", "自强不息，厚德载物", "止于至善"],
+                correct: 1
+            },
+            {
+                question: "复旦大学在哪一年开始招收女生？",
+                options: ["1920年", "1925年", "1927年", "1930年"],
+                correct: 0
+            },
+            {
+                question: "复旦大学的校徽中央图案是什么？",
+                options: ["梧桐叶", "书本", "火炬", "麦穗"],
+                correct: 0
+            },
+            {
+                question: "复旦大学在抗日战争时期迁往哪里办学？",
+                options: ["重庆北碚", "成都", "昆明", "贵阳"],
+                correct: 0
+            },
+            {
+                question: "复旦大学现任校长是谁？",
+                options: ["金力", "许宁生", "焦扬", "张军"],
+                correct: 0
+            },
+            {
+                question: "复旦大学的校色是什么？",
+                options: ["红色和蓝色", "红色和金色", "蓝色和白色", "红色和白色"],
+                correct: 0
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let streak = 0;
+        let maxStreak = 0;
+        let totalAnswered = 0;
+        let selectedOption = null;
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            loadQuestion();
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('scoreValue').textContent = score;
+            document.getElementById('streakValue').textContent = streak;
+            const accuracy = totalAnswered > 0 ? Math.round((score / totalAnswered) * 100) : 0;
+            document.getElementById('accuracyValue').textContent = accuracy + '%';
+        }
+
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = `
+                <div class="quiz-question">${question.question}</div>
+                <div class="quiz-options">
+                    ${question.options.map((option, index) => `
+                        <div class="quiz-option" onclick="selectOption(${index})">
+                            <div class="quiz-option-letter">${String.fromCharCode(65 + index)}</div>
+                            ${option}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            document.getElementById('submitButton').disabled = true;
+            document.getElementById('feedback').style.display = 'none';
+            selectedOption = null;
+        }
+
+        function selectOption(index) {
+            selectedOption = index;
+            const options = document.querySelectorAll('.quiz-option');
+            options.forEach(option => option.classList.remove('selected'));
+            options[index].classList.add('selected');
+            document.getElementById('submitButton').disabled = false;
+        }
+
+        function submitAnswer() {
+            const question = quizData[currentQuestionIndex];
+            const feedback = document.getElementById('feedback');
+            const options = document.querySelectorAll('.quiz-option');
+            
+            totalAnswered++;
+            options[question.correct].classList.add('correct');
+            
+            if (selectedOption !== question.correct) {
+                options[selectedOption].classList.add('wrong');
+                feedback.innerHTML = `<strong>错误！</strong> 正确答案是：${question.options[question.correct]}`;
+                feedback.className = 'quiz-feedback wrong';
+                streak = 0;
+            } else {
+                score++;
+                streak++;
+                maxStreak = Math.max(maxStreak, streak);
+                feedback.innerHTML = '<strong>正确！</strong>';
+                feedback.className = 'quiz-feedback correct';
+            }
+            
+            updateStats();
+            feedback.style.display = 'block';
+            document.getElementById('submitButton').disabled = true;
+            
+            setTimeout(() => {
+                if (currentQuestionIndex < quizData.length - 1) {
+                    currentQuestionIndex++;
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 2000);
+        }
+
+        function showResult() {
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'block';
+            
+            const percentage = Math.round((score / quizData.length) * 100);
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('finalAccuracy').textContent = percentage + '%';
+            document.getElementById('maxStreak').textContent = maxStreak;
+            
+            let rankName, rankDesc;
+            if (percentage >= 90) {
+                rankName = '校史达人';
+                rankDesc = '你对复旦历史了如指掌！';
+            } else if (percentage >= 70) {
+                rankName = '校史学者';
+                rankDesc = '你对复旦历史有很好的了解！';
+            } else if (percentage >= 50) {
+                rankName = '校史新手';
+                rankDesc = '继续加油！还有提升的空间！';
+            } else {
+                rankName = '初来乍到';
+                rankDesc = '建议多了解复旦的历史哦！';
+            }
+            
+            document.getElementById('rankName').textContent = rankName;
+            document.getElementById('rankDesc').textContent = rankDesc;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            streak = 0;
+            maxStreak = 0;
+            totalAnswered = 0;
+            selectedOption = null;
+            
+            document.getElementById('quizResult').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'flex';
+            updateStats();
+        }
+
+        // 初始化
+        document.getElementById('submitButton').addEventListener('click', submitAnswer);
+    </script>
+
+    <!-- 音频控制器 -->
+    <script src="js/audio-controller.js"></script>
 </body>
 </html> 

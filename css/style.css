@@ -106,23 +106,73 @@ html, body {
 
 .music-control {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 30px;
-    height: 30px;
+    bottom: 40px;
+    right: 40px;
     z-index: 1000;
     cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 12px;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .music-icon {
-    width: 100%;
-    height: 100%;
-    fill: #ffffff;
-    transition: transform 0.3s ease;
+    width: 28px;
+    height: 28px;
+    fill: var(--fudan-blue);
+    transition: all 0.3s;
+    display: block;
 }
 
-.music-icon.playing {
-    animation: rotate 3s linear infinite;
+.music-control:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    background: white;
+}
+
+.music-control:hover .music-icon {
+    fill: var(--fudan-red);
+}
+
+.music-control.playing .music-icon {
+    animation: rotate 5s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .music-control {
+        bottom: 25px;
+        right: 25px;
+        padding: 10px;
+    }
+
+    .music-icon {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* 确保音乐控制按钮不会与其他固定定位的元素重叠 */
+.share-buttons {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+}
+
+@media (max-width: 768px) {
+    .share-buttons {
+        bottom: 25px;
+        left: 25px;
+    }
 }
 
 @keyframes shine {
@@ -142,15 +192,6 @@ html, body {
     100% {
         opacity: 0;
         transform: rotate(45deg) translate(5px, 5px);
-    }
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
     }
 }
 
@@ -210,12 +251,12 @@ html, body {
 }
 
 #webgl-bg {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: -1;
 }
 
 /* 加载动画 */
@@ -251,39 +292,6 @@ html, body {
     color: #fff;
     font-size: 16px;
     font-family: sans-serif;
-}
-
-/* 音乐控制按钮样式 */
-.music-control {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 30px;
-    height: 30px;
-    z-index: 1000;
-    cursor: pointer;
-}
-
-.music-icon {
-    width: 100%;
-    height: 100%;
-    fill: #ffffff;
-    transition: transform 0.3s ease;
-}
-
-/* 音乐图标旋转动画 */
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* 播放状态下的动画 */
-.music-icon.playing {
-    animation: rotate 3s linear infinite;
 }
 
 /* 音乐波纹效果 */
@@ -380,24 +388,6 @@ html, body {
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-/* 移动端优化 */
-@media (max-width: 768px) {
-    .share-buttons {
-        bottom: 10px;
-        right: 10px;
-    }
-
-    .music-control {
-        top: 10px;
-        right: 10px;
-    }
-
-    .enter-btn {
-        padding: 12px 24px;
-        font-size: 16px;
-    }
 }
 
 /* 可以添加一个随着页面滚动的视差效果 */
@@ -911,12 +901,13 @@ html, body {
 
 /* 修改主体背景样式 */
 body {
-    font-family: 'Microsoft YaHei', Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    line-height: 1.6;
-    margin-top: 50px; /* 为顶部导航栏留出空间 */
+    margin: 0;
     padding: 0;
+    font-family: 'Microsoft YaHei', sans-serif;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* 修改首页样式，删除红色背景 */

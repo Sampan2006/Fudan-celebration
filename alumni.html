@@ -277,12 +277,61 @@
             from {opacity: 0; transform: translateY(-30px);}
             to {opacity: 1; transform: translateY(0);}
         }
+
+        /* 音乐控制按钮样式 */
+        .music-control {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .music-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--fudan-blue);
+            transition: all 0.3s;
+            display: block;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            background: white;
+        }
+
+        .music-control:hover .music-icon {
+            fill: var(--fudan-red);
+        }
+
+        .music-control.playing .music-icon {
+            animation: rotate 5s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <a href="directory.html" class="back-to-directory">
         <i class="fas fa-home"></i> 返回目录
     </a>
+
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+        </svg>
+    </div>
 
     <div class="page-header">
         <div class="container">
@@ -612,5 +661,8 @@
             }
         });
     </script>
+
+    <!-- 音频控制器 -->
+    <script src="js/audio-controller.js"></script>
 </body>
 </html> 

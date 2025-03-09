@@ -155,6 +155,14 @@
     </style>
 </head>
 <body>
+    <!-- 音乐控制按钮 -->
+    <div class="music-control">
+        <svg class="music-icon" viewBox="0 0 24 24">
+            <path class="music-wave" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <path class="music-note" d="M12.5 7v4.27c-.44-.35-1-0.57-1.6-0.57-1.38 0-2.5 1.12-2.5 2.5s1.12 2.5 2.5 2.5 2.5-1.12 2.5-2.5V9h2V7h-2.5z"/>
+        </svg>
+    </div>
+
     <!-- 顶部导航栏 -->
     <nav class="top-navbar">
         <a href="index.html" class="site-logo">
@@ -298,5 +306,6 @@
             });
         });
     </script>
+    <script src="js/audio-controller.js"></script>
 </body>
 </html> 
