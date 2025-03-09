@@ -1,20 +1,16 @@
-// 增强型游戏配置
-const ENHANCED_CONFIG = {
+// 游戏基础配置
+const GAME_BASE_CONFIG = {
     DAILY_CHALLENGE: {
         enabled: true,
-        attempts: 3,
-        streakBonus: [5, 10, 20] // 连续完成奖励
+        attempts: 10,
+        streakBonus: [5, 10, 20]
     },
     COMBO_SYSTEM: {
         baseScore: 2,
         maxMultiplier: 5,
-        decayTime: 3000, // 连击维持时间(ms)
-        multipliers: [1.2, 1.5, 2.0], // 连击加成倍率
-        colors: [ // 连击数对应的颜色
-            '#ffd700', // 1-2连击
-            '#ff6b6b', // 3-4连击
-            '#4caf50'  // 5+连击
-        ]
+        decayTime: 5000,
+        multipliers: [1.2, 1.5, 2.0],
+        colors: ['#ffd700', '#ff6b6b', '#4caf50']
     },
     DYNAMIC_DIFFICULTY: {
         correctBoost: 0.2,
@@ -22,38 +18,48 @@ const ENHANCED_CONFIG = {
         minDifficulty: 0.5,
         maxDifficulty: 2.5
     },
-    QUESTION_TYPES: {
-        TEXT: 1,
-        IMAGE: 2,
-        SEQUENCE: 3,
-        MULTI_SELECT: 4
+    TIME_LIMIT: 60000,
+    TIME_PER_QUESTION: 15000
+};
+
+// 关卡配置
+const GAME_LEVELS = {
+    BASIC: {
+        id: 1,
+        name: "基础校史",
+        description: "了解复旦的基本历史",
+        requiredScore: 0,
+        minCorrectRate: 0.6,
+        questions: []
+    },
+    EVENTS: {
+        id: 2,
+        name: "学校事件",
+        description: "探索复旦的重要历史事件",
+        requiredScore: 100,
+        minCorrectRate: 0.7,
+        questions: []
+    },
+    ACHIEVEMENTS: {
+        id: 3,
+        name: "复旦成就",
+        description: "了解复旦的杰出校友与科研成果",
+        requiredScore: 200,
+        minCorrectRate: 0.8,
+        questions: []
+    },
+    CHALLENGE: {
+        id: 4,
+        name: "挑战模式",
+        description: "终极校史挑战",
+        requiredScore: 300,
+        minCorrectRate: 0.9,
+        questions: []
     }
 };
 
-// 游戏状态管理
-let gameState = {
-    currentCombo: 0,
-    comboTimeout: null,
-    difficultyFactor: 1,
-    timeAttackMode: false,
-    score: 0,
-    correctAnswers: 0,
-    totalAnswers: 0,
-    streakMultiplier: 1,
-    maxCombo: 0, // 记录最大连击数
-    startTime: null, // 记录开始时间
-    endTime: null, // 记录结束时间
-    dailyChallenge: {
-        currentStreak: 0,
-        remainingAttempts: 3
-    },
-    lastQuestionIndex: null,
-    usedQuestions: new Set(), // 记录已使用的题目
-    achievements: [] // 记录获得的成就
-};
-
 // 成就系统配置
-const ACHIEVEMENTS = {
+const GAME_ACHIEVEMENTS = {
     RANKS: [
         { name: "初学者", minScore: 0, icon: "🌱" },
         { name: "勤学者", minScore: 50, icon: "📚" },
@@ -69,78 +75,98 @@ const ACHIEVEMENTS = {
     ]
 };
 
-// 题库数据
-const QUESTIONS = [
-    {
-        type: ENHANCED_CONFIG.QUESTION_TYPES.TEXT,
-        question: "复旦大学创建于哪一年？",
-        options: ["1900年", "1905年", "1910年", "1915年"],
-        correct: 1,
-        difficulty: 1,
-        category: "校史基础"
+// 合并所有配置
+const GAME_CONFIG = Object.assign({}, GAME_BASE_CONFIG, {
+    LEVELS: GAME_LEVELS,
+    ACHIEVEMENTS: GAME_ACHIEVEMENTS
+});
+
+// 游戏状态
+let gameState = {
+    currentCombo: 0,
+    comboTimeout: null,
+    difficultyFactor: 1,
+    timeAttackMode: false,
+    score: 0,
+    correctAnswers: 0,
+    totalAnswers: 0,
+    streakMultiplier: 1,
+    maxCombo: 0,
+    startTime: null,
+    endTime: null,
+    currentLevel: null,
+    unlockedLevels: new Set([1]),
+    levelProgress: {},
+    dailyChallenge: {
+        currentStreak: 0,
+        remainingAttempts: GAME_CONFIG.DAILY_CHALLENGE.attempts
     },
-    {
-        type: ENHANCED_CONFIG.QUESTION_TYPES.TEXT,
-        question: "复旦校名的含义是什么？",
-        options: [
-            "取自《尚书大传》日月光华，旦复旦兮",
-            "创始人的名字",
-            "地名",
-            "英文翻译"
+    lastQuestionIndex: null,
+    usedQuestions: new Set(),
+    achievements: []
+};
+
+// 初始化题库
+function initQuestions() {
+    const questions = {
+        BASIC: [
+            {
+                type: "text",
+                question: "复旦大学创建于哪一年？",
+                options: ["1900年", "1905年", "1910年", "1915年"],
+                correct: 1,
+                difficulty: 1,
+                category: "校史基础"
+            }
         ],
-        correct: 0,
-        difficulty: 1,
-        category: "校史基础"
-    },
-    {
-        type: ENHANCED_CONFIG.QUESTION_TYPES.IMAGE,
-        question: "下图是复旦大学的哪栋标志性建筑？",
-        media: "assets/images/buildings/guanghua.png",
-        options: ["光华楼", "相辉堂", "第一教学楼", "图书馆"],
-        correct: 0,
-        difficulty: 1.5,
-        category: "校园建筑"
-    },
-    {
-        type: ENHANCED_CONFIG.QUESTION_TYPES.TEXT,
-        question: "复旦大学的校训是什么？",
-        options: [
-            "明德格物",
-            "博学而笃志，切问而近思",
-            "自强不息，厚德载物",
-            "求实创新"
+        EVENTS: [
+            {
+                type: "text",
+                question: "复旦大学在哪一年正式合并上海医科大学？",
+                options: ["2000年", "2002年", "2005年", "2010年"],
+                correct: 0,
+                difficulty: 2,
+                category: "历史事件"
+            }
         ],
-        correct: 1,
-        difficulty: 1,
-        category: "校史基础"
-    },
-    {
-        type: ENHANCED_CONFIG.QUESTION_TYPES.MULTI_SELECT,
-        question: "以下哪些是复旦大学的校色？（多选）",
-        options: ["红色", "蓝色", "金色", "白色"],
-        correct: [0, 1],
-        difficulty: 2,
-        category: "校史基础"
-    }
-];
+        ACHIEVEMENTS: [
+            {
+                type: "text",
+                question: "复旦大学的第一位诺贝尔奖校友是谁？",
+                options: ["屠呦呦", "杨振宁", "朱棣文", "李政道"],
+                correct: 1,
+                difficulty: 3,
+                category: "杰出校友"
+            }
+        ],
+        CHALLENGE: [
+            {
+                type: "text",
+                question: '复旦大学校徽中的"复旦"二字，源于哪本经典古籍？',
+                options: ["《大学》", "《尚书大传》", "《论语》", "《春秋》"],
+                correct: 1,
+                difficulty: 4,
+                category: "终极挑战"
+            }
+        ]
+    };
+    
+    // 初始化各关卡题库
+    Object.keys(questions).forEach(level => {
+        if (GAME_CONFIG.LEVELS && GAME_CONFIG.LEVELS[level]) {
+            GAME_CONFIG.LEVELS[level].questions = questions[level];
+        }
+    });
+}
 
 // 初始化游戏
 function initGame() {
+    initQuestions();
+    initAudio();
     loadGameState();
-    
-    // 检查是否显示每日挑战
-    const lastPlayed = localStorage.getItem('dailyChallengeDate');
-    const today = new Date().toDateString();
-    
-    if (lastPlayed !== today && ENHANCED_CONFIG.DAILY_CHALLENGE.enabled) {
-        initDailyChallenge();
-    } else {
-        // 如果不显示每日挑战，直接开始普通游戏
-        startNormalGame();
-    }
-    
-    loadAudioAssets();
-    registerServiceWorker();
+    loadLevelProgress();
+    updateStats();
+    updateLevelDisplay();
 }
 
 // 加载游戏状态
@@ -169,8 +195,8 @@ function updateCombo(isCorrect) {
         gameState.maxCombo = Math.max(gameState.maxCombo, gameState.currentCombo);
         
         // 更新连击倍率
-        const multiplierIndex = Math.min(gameState.currentCombo - 1, ENHANCED_CONFIG.COMBO_SYSTEM.multipliers.length - 1);
-        gameState.streakMultiplier = ENHANCED_CONFIG.COMBO_SYSTEM.multipliers[multiplierIndex] || 1;
+        const multiplierIndex = Math.min(gameState.currentCombo - 1, GAME_CONFIG.COMBO_SYSTEM.multipliers.length - 1);
+        gameState.streakMultiplier = GAME_CONFIG.COMBO_SYSTEM.multipliers[multiplierIndex] || 1;
         
         // 更新连击显示
         const comboDisplay = document.getElementById('comboDisplay');
@@ -180,9 +206,9 @@ function updateCombo(isCorrect) {
         // 设置连击颜色
         const colorIndex = Math.min(
             Math.floor((gameState.currentCombo - 1) / 2),
-            ENHANCED_CONFIG.COMBO_SYSTEM.colors.length - 1
+            GAME_CONFIG.COMBO_SYSTEM.colors.length - 1
         );
-        comboDisplay.style.color = ENHANCED_CONFIG.COMBO_SYSTEM.colors[colorIndex];
+        comboDisplay.style.color = GAME_CONFIG.COMBO_SYSTEM.colors[colorIndex];
         
         // 连击特效
         if (gameState.currentCombo >= 3) {
@@ -194,7 +220,7 @@ function updateCombo(isCorrect) {
         const multiplierDisplay = document.getElementById('scoreMultiplier');
         multiplierDisplay.style.display = 'block';
         multiplierDisplay.textContent = `x${gameState.streakMultiplier.toFixed(1)}`;
-        multiplierDisplay.style.background = ENHANCED_CONFIG.COMBO_SYSTEM.colors[colorIndex];
+        multiplierDisplay.style.background = GAME_CONFIG.COMBO_SYSTEM.colors[colorIndex];
         
         clearTimeout(gameState.comboTimeout);
         gameState.comboTimeout = setTimeout(() => {
@@ -202,7 +228,7 @@ function updateCombo(isCorrect) {
             gameState.streakMultiplier = 1;
             comboDisplay.style.display = 'none';
             multiplierDisplay.style.display = 'none';
-        }, ENHANCED_CONFIG.COMBO_SYSTEM.decayTime);
+        }, GAME_CONFIG.COMBO_SYSTEM.decayTime);
     } else {
         gameState.currentCombo = 0;
         gameState.streakMultiplier = 1;
@@ -222,9 +248,9 @@ function showComboPopup() {
     // 设置颜色
     const colorIndex = Math.min(
         Math.floor((gameState.currentCombo - 1) / 2),
-        ENHANCED_CONFIG.COMBO_SYSTEM.colors.length - 1
+        GAME_CONFIG.COMBO_SYSTEM.colors.length - 1
     );
-    popup.style.color = ENHANCED_CONFIG.COMBO_SYSTEM.colors[colorIndex];
+    popup.style.color = GAME_CONFIG.COMBO_SYSTEM.colors[colorIndex];
     
     // 重置动画
     popup.style.animation = 'none';
@@ -239,13 +265,13 @@ function showComboPopup() {
 // 动态难度调整
 function adjustDifficulty(isCorrect) {
     const delta = isCorrect ? 
-        ENHANCED_CONFIG.DYNAMIC_DIFFICULTY.correctBoost : 
-        ENHANCED_CONFIG.DYNAMIC_DIFFICULTY.wrongPenalty;
+        GAME_CONFIG.DYNAMIC_DIFFICULTY.correctBoost : 
+        GAME_CONFIG.DYNAMIC_DIFFICULTY.wrongPenalty;
     
     gameState.difficultyFactor = Math.max(
-        ENHANCED_CONFIG.DYNAMIC_DIFFICULTY.minDifficulty,
+        GAME_CONFIG.DYNAMIC_DIFFICULTY.minDifficulty,
         Math.min(
-            ENHANCED_CONFIG.DYNAMIC_DIFFICULTY.maxDifficulty,
+            GAME_CONFIG.DYNAMIC_DIFFICULTY.maxDifficulty,
             gameState.difficultyFactor + delta
         )
     );
@@ -257,6 +283,8 @@ function adjustDifficulty(isCorrect) {
 
 // 显示问题
 function showQuestion(question) {
+    if (!question) return;
+    
     // 设置题目类型标签
     const questionType = document.getElementById('questionType');
     if (Array.isArray(question.correct)) {
@@ -279,7 +307,7 @@ function showQuestion(question) {
     const mediaContainer = document.getElementById('mediaContainer');
     const questionImage = document.getElementById('questionImage');
     
-    if (question.type === ENHANCED_CONFIG.QUESTION_TYPES.IMAGE && question.media) {
+    if (question.type === "image" && question.media) {
         mediaContainer.style.display = 'block';
         // 预加载图片
         const img = new Image();
@@ -345,7 +373,7 @@ function handleAnswer(index, question) {
 
 // 计算得分
 function calculateScore(difficulty) {
-    const baseScore = ENHANCED_CONFIG.COMBO_SYSTEM.baseScore;
+    const baseScore = GAME_CONFIG.COMBO_SYSTEM.baseScore;
     return Math.round(baseScore * difficulty * gameState.streakMultiplier);
 }
 
@@ -408,9 +436,20 @@ function showAnswerFeedback(selectedIndex, question) {
 
 // 加载下一题
 function loadNextQuestion() {
-    const question = selectQuestion();
-    if (question) {
-        showQuestion(question);
+    // 从当前关卡的题库中选择题目
+    if (!gameState.currentLevel || !gameState.currentLevel.questions) {
+        return;
+    }
+    
+    const levelQuestions = gameState.currentLevel.questions;
+    const unusedQuestions = levelQuestions.filter((_, index) => !gameState.usedQuestions.has(index));
+    
+    if (unusedQuestions.length > 0) {
+        const randomIndex = Math.floor(Math.random() * unusedQuestions.length);
+        const nextQuestion = unusedQuestions[randomIndex];
+        const originalIndex = levelQuestions.indexOf(nextQuestion);
+        gameState.usedQuestions.add(originalIndex);
+        showQuestion(nextQuestion);
     } else {
         endGame();
     }
@@ -418,13 +457,20 @@ function loadNextQuestion() {
 
 // 根据难度选择题目
 function selectQuestion() {
+    // 如果当前关卡未设置或没有题目，返回null
+    if (!gameState.currentLevel || !gameState.currentLevel.questions) {
+        return null;
+    }
+    
+    const questions = gameState.currentLevel.questions;
+    
     // 如果所有题目都已回答完,进入结算
-    if (gameState.usedQuestions.size === QUESTIONS.length) {
+    if (gameState.usedQuestions.size === questions.length) {
         return null;
     }
     
     // 获取未使用的题目
-    const unusedQuestions = QUESTIONS.filter((_, index) => !gameState.usedQuestions.has(index));
+    const unusedQuestions = questions.filter((_, index) => !gameState.usedQuestions.has(index));
     
     // 如果没有可用题目,进入结算
     if (unusedQuestions.length === 0) {
@@ -434,7 +480,7 @@ function selectQuestion() {
     // 随机选择一个未使用的题目
     const randomIndex = Math.floor(Math.random() * unusedQuestions.length);
     const selectedQuestion = unusedQuestions[randomIndex];
-    const originalIndex = QUESTIONS.indexOf(selectedQuestion);
+    const originalIndex = questions.indexOf(selectedQuestion);
     
     // 记录题目使用情况
     gameState.usedQuestions.add(originalIndex);
@@ -445,13 +491,13 @@ function selectQuestion() {
 // 获取题目类型标签
 function getQuestionTypeLabel(type) {
     switch(type) {
-        case ENHANCED_CONFIG.QUESTION_TYPES.TEXT:
+        case "text":
             return "文字题";
-        case ENHANCED_CONFIG.QUESTION_TYPES.IMAGE:
+        case "image":
             return "图片题";
-        case ENHANCED_CONFIG.QUESTION_TYPES.SEQUENCE:
+        case "sequence":
             return "排序题";
-        case ENHANCED_CONFIG.QUESTION_TYPES.MULTI_SELECT:
+        case "multi_select":
             return "多选题";
         default:
             return "未知类型";
@@ -466,7 +512,7 @@ function initDailyChallenge() {
     if (lastPlayed !== today) {
         gameState.dailyChallenge = {
             currentStreak: 0,
-            remainingAttempts: ENHANCED_CONFIG.DAILY_CHALLENGE.attempts
+            remainingAttempts: GAME_CONFIG.DAILY_CHALLENGE.attempts
         };
         localStorage.setItem('dailyChallengeDate', today);
     }
@@ -530,21 +576,80 @@ function saveGameState() {
 
 // 音频系统
 const audioClips = {
-    correct: new Audio('assets/audio/correct.mp3'),
-    wrong: new Audio('assets/audio/wrong.mp3'),
-    combo: new Audio('assets/audio/combo.mp3')
+    correct: null,
+    wrong: null,
+    combo: null
 };
 
+// 初始化音频
+function initAudio() {
+    const audioFiles = {
+        correct: 'assets/audio/correct.mp3',
+        wrong: 'assets/audio/wrong.mp3',
+        combo: 'assets/audio/combo.mp3'
+    };
+
+    let hasAudioSupport = false;
+
+    // 检查音频支持
+    try {
+        const audio = new Audio();
+        hasAudioSupport = audio && typeof audio.play === 'function';
+    } catch (error) {
+        console.warn('浏览器不支持音频播放');
+        return;
+    }
+
+    if (!hasAudioSupport) {
+        console.warn('浏览器不支持音频播放，游戏将在静音模式下运行');
+        return;
+    }
+
+    Object.entries(audioFiles).forEach(([key, path]) => {
+        const audio = new Audio();
+        
+        audio.addEventListener('error', (e) => {
+            console.warn(`音频文件 ${path} 加载失败（错误代码: ${e.target.error.code}），将在静音模式下继续`);
+            audioClips[key] = null;
+        });
+
+        audio.addEventListener('canplaythrough', () => {
+            console.log(`音频文件 ${path} 加载成功`);
+            audioClips[key] = audio;
+        });
+
+        try {
+            audio.src = path;
+            audio.load();
+        } catch (error) {
+            console.warn(`音频系统初始化失败: ${error.message}`);
+            audioClips[key] = null;
+        }
+    });
+}
+
 function playSound(key) {
-    if (audioClips[key]) {
-        audioClips[key].currentTime = 0;
-        audioClips[key].play().catch(() => {});
+    const audio = audioClips[key];
+    if (!audio) return;
+
+    try {
+        // 创建新的音频实例以支持重叠播放
+        const soundInstance = audio.cloneNode();
+        const playPromise = soundInstance.play();
+        
+        if (playPromise) {
+            playPromise.catch((error) => {
+                console.warn(`音效 ${key} 播放失败:`, error);
+            });
+        }
         
         // 连击音效
-        if (key === 'correct' && gameState.currentCombo >= 3) {
-            audioClips.combo.currentTime = 0;
-            audioClips.combo.play().catch(() => {});
+        if (key === 'correct' && gameState.currentCombo >= 3 && audioClips.combo) {
+            const comboInstance = audioClips.combo.cloneNode();
+            comboInstance.play().catch(() => {});
         }
+    } catch (error) {
+        console.warn(`音效 ${key} 播放出错:`, error);
     }
 }
 
@@ -567,7 +672,7 @@ function endGame() {
     const accuracy = Math.round((gameState.correctAnswers / gameState.totalAnswers) * 100);
     
     // 获取最高等级成就
-    const highestRank = achievements.find(a => ACHIEVEMENTS.RANKS.includes(a)) || ACHIEVEMENTS.RANKS[0];
+    const highestRank = achievements.find(a => GAME_CONFIG.ACHIEVEMENTS.RANKS.includes(a)) || GAME_CONFIG.ACHIEVEMENTS.RANKS[0];
     
     // 创建结算界面
     const resultHtml = `
@@ -579,7 +684,7 @@ function endGame() {
             <div class="result-stats">
                 <p>最终得分: ${finalScore}</p>
                 <p>正确率: ${accuracy}%</p>
-                <p>答题数量: ${gameState.totalAnswers}/${QUESTIONS.length}</p>
+                <p>答题数量: ${gameState.totalAnswers}/${gameState.currentLevel.questions.length}</p>
                 <p>用时: ${totalTime}秒</p>
                 <p>最大连击: ${gameState.maxCombo}</p>
             </div>
@@ -608,7 +713,7 @@ function endGame() {
 
 // 分享结果
 function shareResult() {
-    const highestRank = gameState.achievements.find(a => ACHIEVEMENTS.RANKS.includes(a)) || ACHIEVEMENTS.RANKS[0];
+    const highestRank = gameState.achievements.find(a => GAME_CONFIG.ACHIEVEMENTS.RANKS.includes(a)) || GAME_CONFIG.ACHIEVEMENTS.RANKS[0];
     const shareText = `
 我在复旦校史问答中获得了"${highestRank.name}"称号！
 得分：${gameState.score}
@@ -670,9 +775,12 @@ function resetGameState() {
         maxCombo: 0,
         startTime: null,
         endTime: null,
+        currentLevel: GAME_CONFIG.LEVELS.BASIC,
+        unlockedLevels: new Set([1]),
+        levelProgress: {},
         dailyChallenge: {
             currentStreak: 0,
-            remainingAttempts: ENHANCED_CONFIG.DAILY_CHALLENGE.attempts
+            remainingAttempts: GAME_CONFIG.DAILY_CHALLENGE.attempts
         },
         lastQuestionIndex: null,
         usedQuestions: new Set(),
@@ -684,11 +792,11 @@ function resetGameState() {
 // 检查成就
 function checkAchievements() {
     const achievements = [];
-    const totalTime = (gameState.endTime - gameState.startTime) / 1000; // 总用时(秒)
-    const averageTime = totalTime / gameState.totalAnswers; // 平均每题用时
+    const totalTime = (gameState.endTime - gameState.startTime) / 1000;
+    const averageTime = totalTime / gameState.totalAnswers;
     
     // 检查排名成就
-    for (const rank of ACHIEVEMENTS.RANKS) {
+    for (const rank of GAME_CONFIG.ACHIEVEMENTS.RANKS) {
         if (gameState.score >= rank.minScore) {
             achievements.push(rank);
         }
@@ -696,19 +804,194 @@ function checkAchievements() {
     
     // 检查特殊成就
     if (gameState.correctAnswers === gameState.totalAnswers) {
-        achievements.push(ACHIEVEMENTS.SPECIAL[0]); // 完美答题
+        achievements.push(GAME_CONFIG.ACHIEVEMENTS.SPECIAL[0]); // 完美答题
     }
     if (averageTime < 3) {
-        achievements.push(ACHIEVEMENTS.SPECIAL[1]); // 神速答题
+        achievements.push(GAME_CONFIG.ACHIEVEMENTS.SPECIAL[1]); // 神速答题
     }
     if (gameState.maxCombo >= 5) {
-        achievements.push(ACHIEVEMENTS.SPECIAL[2]); // 连击大师
+        achievements.push(GAME_CONFIG.ACHIEVEMENTS.SPECIAL[2]); // 连击大师
     }
-    if (gameState.usedQuestions.size === QUESTIONS.length) {
-        achievements.push(ACHIEVEMENTS.SPECIAL[3]); // 百分百完成
+    if (gameState.currentLevel && gameState.currentLevel.questions && 
+        gameState.usedQuestions.size === gameState.currentLevel.questions.length) {
+        achievements.push(GAME_CONFIG.ACHIEVEMENTS.SPECIAL[3]); // 百分百完成
     }
     
     return achievements;
+}
+
+// 检查关卡解锁条件
+function checkLevelUnlock() {
+    const currentProgress = gameState.levelProgress[gameState.currentLevel.id] || {
+        score: 0,
+        correctRate: 0
+    };
+    
+    // 检查每个关卡
+    Object.values(GAME_CONFIG.LEVELS).forEach(level => {
+        if (!gameState.unlockedLevels.has(level.id) && 
+            currentProgress.score >= level.requiredScore && 
+            currentProgress.correctRate >= level.minCorrectRate) {
+            // 解锁新关卡
+            gameState.unlockedLevels.add(level.id);
+            showLevelUnlockNotification(level);
+        }
+    });
+}
+
+// 显示关卡解锁通知
+function showLevelUnlockNotification(level) {
+    const notification = document.createElement('div');
+    notification.className = 'level-unlock-notification';
+    notification.innerHTML = `
+        <h3>🎉 新关卡解锁！</h3>
+        <p>${level.name}</p>
+        <p>${level.description}</p>
+    `;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// 更新关卡进度
+function updateLevelProgress() {
+    const levelId = gameState.currentLevel.id;
+    const correctRate = gameState.correctAnswers / gameState.totalAnswers;
+    
+    gameState.levelProgress[levelId] = {
+        score: gameState.score,
+        correctRate: correctRate
+    };
+    
+    checkLevelUnlock();
+    saveLevelProgress();
+}
+
+// 加载关卡进度
+function loadLevelProgress() {
+    const savedProgress = localStorage.getItem('quizLevelProgress');
+    if (savedProgress) {
+        try {
+            const { progress, unlockedLevels } = JSON.parse(savedProgress);
+            gameState.levelProgress = progress || {};
+            // 确保 unlockedLevels 是一个 Set 对象
+            gameState.unlockedLevels = new Set(Array.isArray(unlockedLevels) ? unlockedLevels : [1]);
+        } catch (error) {
+            console.warn('加载关卡进度失败:', error);
+            gameState.levelProgress = {};
+            gameState.unlockedLevels = new Set([1]);
+        }
+    } else {
+        gameState.levelProgress = {};
+        gameState.unlockedLevels = new Set([1]);
+    }
+}
+
+// 保存关卡进度
+function saveLevelProgress() {
+    try {
+        localStorage.setItem('quizLevelProgress', JSON.stringify({
+            progress: gameState.levelProgress,
+            unlockedLevels: Array.from(gameState.unlockedLevels)
+        }));
+    } catch (error) {
+        console.warn('保存关卡进度失败:', error);
+    }
+}
+
+// 选择关卡
+function selectLevel(levelId) {
+    if (gameState.unlockedLevels.has(levelId)) {
+        const selectedLevel = Object.values(GAME_CONFIG.LEVELS).find(function(l) {
+            return l.id === levelId;
+        });
+        if (selectedLevel) {
+            gameState.currentLevel = selectedLevel;
+            resetGameState();
+            // 隐藏关卡选择界面，显示答题界面
+            const levelSelect = document.getElementById('levelSelect');
+            const quizContainer = document.getElementById('quizContainer');
+            if (levelSelect && quizContainer) {
+                levelSelect.style.display = 'none';
+                quizContainer.style.display = 'block';
+                startLevel();
+            }
+        }
+    }
+}
+
+// 开始关卡
+function startLevel() {
+    gameState.startTime = new Date();
+    gameState.usedQuestions = new Set();
+    gameState.score = 0;
+    gameState.correctAnswers = 0;
+    gameState.totalAnswers = 0;
+    gameState.currentCombo = 0;
+    
+    // 更新统计显示
+    updateStats();
+    
+    // 从当前关卡的题库中加载第一道题
+    if (gameState.currentLevel && gameState.currentLevel.questions) {
+        const levelQuestions = gameState.currentLevel.questions;
+        if (levelQuestions.length > 0) {
+            const randomIndex = Math.floor(Math.random() * levelQuestions.length);
+            const firstQuestion = levelQuestions[randomIndex];
+            if (firstQuestion) {
+                gameState.usedQuestions.add(randomIndex);
+                showQuestion(firstQuestion);
+            }
+        }
+    }
+}
+
+// 更新关卡显示
+function updateLevelDisplay() {
+    const levelSelect = document.getElementById('levelSelect');
+    if (!levelSelect) return;
+
+    const levelsContainer = document.getElementById('levelsContainer');
+    if (!levelsContainer) return;
+
+    levelsContainer.innerHTML = '';
+    
+    Object.values(GAME_CONFIG.LEVELS).forEach(level => {
+        const levelCard = document.createElement('div');
+        levelCard.className = 'level-card';
+        if (!gameState.unlockedLevels.has(level.id)) {
+            levelCard.classList.add('locked');
+        }
+        
+        levelCard.innerHTML = `
+            <h3>${level.name}</h3>
+            <p>${level.description}</p>
+            <div class="level-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${calculateLevelProgress(level.id)}%"></div>
+                </div>
+                <span class="progress-text">${calculateLevelProgress(level.id)}%</span>
+            </div>
+            ${gameState.unlockedLevels.has(level.id) ? 
+                `<button onclick="selectLevel(${level.id})" class="level-btn">开始</button>` :
+                `<div class="lock-info">
+                    <span>🔒 需要分数: ${level.requiredScore}</span>
+                    <span>正确率: ${level.minCorrectRate * 100}%</span>
+                </div>`
+            }
+        `;
+        
+        levelsContainer.appendChild(levelCard);
+    });
+}
+
+// 计算关卡进度
+function calculateLevelProgress(levelId) {
+    const progress = gameState.levelProgress[levelId];
+    if (!progress) return 0;
+    return Math.round((progress.correctRate || 0) * 100);
 }
 
 // 初始化游戏

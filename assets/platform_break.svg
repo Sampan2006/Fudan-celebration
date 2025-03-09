@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="100" height="20" viewBox="0 0 100 20" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="20" fill="#ff6b6b" rx="4"/>
-    <rect x="2" y="2" width="96" height="8" fill="#ff8a8a" rx="2"/>
-    <!-- 裂纹 -->
-    <path d="M20 0 L25 20 M40 0 L35 20 M60 0 L65 20 M80 0 L75 20" 
-          stroke="#d32f2f" stroke-width="2" fill="none"/>
-</svg> 

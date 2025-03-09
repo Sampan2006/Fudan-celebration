@@ -334,6 +334,161 @@
                 flex-direction: column;
             }
         }
+
+        .level-select {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .level-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .level-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-card:not(.locked):hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .level-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .level-card h3 {
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .level-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .level-progress {
+            margin: 1rem 0;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--fudan-red), #ff6b6b);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .level-btn {
+            background: var(--fudan-red);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .level-btn:hover:not(:disabled) {
+            background: #d32f2f;
+            transform: translateY(-2px);
+        }
+
+        .level-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .locked {
+            opacity: 0.7;
+        }
+
+        .locked::before {
+            content: '🔒';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .level-unlock-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 9999;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .back-to-levels {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--fudan-blue);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .back-to-levels:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -355,33 +510,96 @@
     </nav>
 
     <div class="container">
-        <div class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value" id="scoreValue">0</div>
-                <div class="stat-label">总分</div>
-                <div class="stat-multiplier" id="scoreMultiplier">x1.0</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="streakValue">0</div>
-                <div class="stat-label">连续答对</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="accuracyValue">0%</div>
-                <div class="stat-label">正确率</div>
+        <div class="level-select" id="levelSelect">
+            <h2 class="section-title">校史问答关卡</h2>
+            <div class="level-grid">
+                <div class="level-card" data-level="1">
+                    <div class="level-icon">📚</div>
+                    <h3>基础校史</h3>
+                    <p>了解复旦的基本历史</p>
+                    <div class="level-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0%</span>
+                    </div>
+                    <button class="level-btn" onclick="selectLevel(1)">开始</button>
+                </div>
+                
+                <div class="level-card locked" data-level="2">
+                    <div class="level-icon">🏛️</div>
+                    <h3>学校事件</h3>
+                    <p>探索复旦重要历史事件</p>
+                    <div class="level-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0%</span>
+                    </div>
+                    <button class="level-btn" onclick="selectLevel(2)" disabled>需要100分解锁</button>
+                </div>
+                
+                <div class="level-card locked" data-level="3">
+                    <div class="level-icon">🏆</div>
+                    <h3>复旦成就</h3>
+                    <p>了解复旦的杰出校友与科研成果</p>
+                    <div class="level-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0%</span>
+                    </div>
+                    <button class="level-btn" onclick="selectLevel(3)" disabled>需要200分解锁</button>
+                </div>
+                
+                <div class="level-card locked" data-level="4">
+                    <div class="level-icon">⭐</div>
+                    <h3>挑战模式</h3>
+                    <p>终极校史挑战</p>
+                    <div class="level-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text">0%</span>
+                    </div>
+                    <button class="level-btn" onclick="selectLevel(4)" disabled>需要300分解锁</button>
+                </div>
             </div>
         </div>
 
-        <div class="quiz-card" id="questionCard">
-            <div class="question-tag" id="questionType">文字题</div>
-            <div class="question-text" id="questionText">
-                准备开始答题...
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-value" id="scoreValue">0</div>
+                    <div class="stat-label">总分</div>
+                    <div class="stat-multiplier" id="scoreMultiplier">x1.0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="streakValue">0</div>
+                    <div class="stat-label">连续答对</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="accuracyValue">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
             </div>
-            <div class="media-question" id="mediaContainer" style="display: none;">
-                <img class="media-image" id="questionImage" src="" alt="">
+
+            <div class="quiz-card" id="questionCard">
+                <div class="question-tag" id="questionType">文字题</div>
+                <div class="question-text" id="questionText">
+                    准备开始答题...
+                </div>
+                <div class="media-question" id="mediaContainer" style="display: none;">
+                    <img class="media-image" id="questionImage" src="" alt="">
+                </div>
+                <div class="options-grid" id="optionsContainer">
+                    <!-- 选项将通过JavaScript动态生成 -->
+                </div>
             </div>
-            <div class="options-grid" id="optionsContainer">
-                <!-- 选项将通过JavaScript动态生成 -->
-            </div>
+            <a href="#" class="back-to-levels" onclick="showLevelSelect(); return false;">
+                <i class="fas fa-arrow-left"></i>
+                返回关卡选择
+            </a>
         </div>
     </div>
 
@@ -392,8 +610,8 @@
                 <span id="streakCount">0</span> 日连胜
             </div>
             <div class="challenge-rules">
-                <p>🎯 完成3道随机难题</p>
-                <p>⏱ 限时60秒</p>
+                <p>🎯 完成10道随机题目</p>
+                <p>⏱ 每题15秒，总时限60秒</p>
                 <p>🔥 连胜奖励逐日增加</p>
             </div>
             <div class="modal-actions">
@@ -408,5 +626,46 @@
     </div>
 
     <script src="js/quiz-game.js"></script>
+    <script>
+        // 显示关卡选择界面
+        function showLevelSelect() {
+            document.getElementById('levelSelect').style.display = 'block';
+            document.getElementById('quizContainer').style.display = 'none';
+        }
+
+        // 开始关卡
+        function startLevel(levelId) {
+            document.getElementById('levelSelect').style.display = 'none';
+            document.getElementById('quizContainer').style.display = 'block';
+            selectLevel(levelId);
+        }
+
+        // 更新关卡进度显示
+        function updateLevelDisplay() {
+            Object.values(LEVELS).forEach(level => {
+                const card = document.querySelector(`.level-card[data-level="${level.id}"]`);
+                const progress = gameState.levelProgress[level.id] || { score: 0, correctRate: 0 };
+                const progressBar = card.querySelector('.progress-fill');
+                const progressText = card.querySelector('.progress-text');
+                
+                // 更新进度条
+                progressBar.style.width = `${progress.correctRate * 100}%`;
+                progressText.textContent = `${Math.round(progress.correctRate * 100)}%`;
+                
+                // 更新解锁状态
+                if (gameState.unlockedLevels.has(level.id)) {
+                    card.classList.remove('locked');
+                    card.querySelector('.level-btn').disabled = false;
+                    card.querySelector('.level-btn').textContent = '开始';
+                }
+            });
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLevelProgress();
+            updateLevelDisplay();
+        });
+    </script>
 </body>
 </html> 
