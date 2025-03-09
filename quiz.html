@@ -3,30 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校史问答闯关 - 复旦120周年</title>
+    <title>复旦校史问答</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --fudan-blue: #1a237e;
             --fudan-red: #b71c1c;
             --card-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --gradient-start: #1a237e;
+            --gradient-end: #b71c1c;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
         }
 
         body {
-            font-family: Arial, sans-serif;
             background-color: #f5f5f5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* 动态背景特效 */
         .dynamic-background {
             position: fixed;
             top: 0;
@@ -34,94 +35,51 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
-            opacity: 0.1;
-            animation: bg-pulse 20s infinite;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0.05;
+            animation: gradientBG 15s ease infinite;
         }
 
-        @keyframes bg-pulse {
-            0% { opacity: 0.1; }
-            50% { opacity: 0.15; }
-            100% { opacity: 0.1; }
-        }
-
-        /* 连击特效 */
-        .combo-display {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            font-size: 1.5rem;
-            color: #ffd700;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        /* 新增连击弹出效果 */
-        .combo-popup {
-            position: fixed;
-            top: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2em;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-            animation: comboFloat 1s ease-out;
-            display: none;
-            z-index: 1001;
-        }
-
-        @keyframes comboFloat {
-            0% { opacity: 1; transform: translate(-50%, 0); }
-            100% { opacity: 0; transform: translate(-50%, -100px); }
-        }
-
-        /* 计时挑战模式 */
-        .timer-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.9);
-            padding: 10px 20px;
-            border-radius: 20px;
-            box-shadow: var(--card-shadow);
-            z-index: 1000;
-        }
-
-        .timer-progress {
-            width: 200px;
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            margin-top: 8px;
-        }
-
-        .timer-fill {
-            height: 100%;
-            background: #4CAF50;
-            border-radius: 4px;
-            transition: width 0.1s linear;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .top-navbar {
-            background-color: var(--fudan-red);
-            padding: 10px 20px;
+            background: linear-gradient(to right, var(--fudan-blue), var(--fudan-red));
+            padding: 15px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             color: white;
-            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .site-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 30px;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         .container {
@@ -131,105 +89,339 @@
             flex: 1;
         }
 
-        .quiz-card {
+        .start-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3rem;
+            padding: 3rem 2rem;
             background: white;
-            border-radius: 15px;
-            padding: 2rem;
+            border-radius: 20px;
             box-shadow: var(--card-shadow);
-            margin-bottom: 2rem;
+            margin-top: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--fudan-blue), var(--fudan-red));
+        }
+
+        .start-screen h1 {
+            font-size: 2.8rem;
+            color: var(--fudan-blue);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             position: relative;
         }
 
-        .question-tag {
+        .start-screen h1::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--fudan-blue), var(--fudan-red));
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        .start-screen p {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .challenge-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .challenge-stat {
+            background: white;
+            color: var(--fudan-blue);
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .challenge-stat:hover {
+            transform: translateY(-5px);
+        }
+
+        .challenge-stat::before {
+            content: '';
             position: absolute;
-            top: -15px;
-            right: 20px;
-            background: var(--fudan-red);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--fudan-blue), var(--fudan-red));
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .challenge-stat .stat-value {
+            font-size: 4rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .challenge-stat .stat-label {
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+
+        .start-btn {
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
             color: white;
-            padding: 4px 12px;
+            padding: 1.2rem 4rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--fudan-red), var(--fudan-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+        }
+
+        .start-btn:hover::before {
+            opacity: 1;
+        }
+
+        .start-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
             border-radius: 15px;
-            font-size: 0.8rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--fudan-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 1rem;
+            position: relative;
         }
 
         .question-text {
             font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            line-height: 1.5;
-        }
-
-        .media-question {
-            margin: 1rem 0;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .media-image {
-            max-width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
+            color: #333;
+            margin-bottom: 2rem;
+            line-height: 1.6;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
+            margin-top: 1.5rem;
         }
 
         .option-btn {
-            background: #f5f5f5;
-            border: 2px solid #ddd;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
             padding: 1rem;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
             transition: all 0.3s;
+            text-align: left;
+            line-height: 1.4;
         }
 
         .option-btn:hover {
-            background: #e0e0e0;
+            background: #e9ecef;
             transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .option-btn.correct {
             background: #4CAF50;
             color: white;
             border-color: #4CAF50;
-            animation: correctAnswer 0.5s ease;
         }
 
         .option-btn.wrong {
             background: #f44336;
             color: white;
             border-color: #f44336;
-            animation: wrongAnswer 0.5s ease;
         }
 
-        @keyframes correctAnswer {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @media (max-width: 768px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .start-screen {
+                padding: 2rem 1rem;
+                gap: 2rem;
+            }
+            
+            .start-screen h1 {
+                font-size: 2.2rem;
+            }
+            
+            .challenge-stat {
+                padding: 1.5rem;
+            }
+            
+            .challenge-stat .stat-value {
+                font-size: 3rem;
+            }
+            
+            .challenge-stat .stat-label {
+                font-size: 1.2rem;
+            }
+            
+            .start-btn {
+                padding: 1rem 3rem;
+                font-size: 1.2rem;
+            }
         }
 
-        @keyframes wrongAnswer {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-5px); }
-            40%, 80% { transform: translateX(5px); }
+        /* 结算页面样式 */
+        .result-card {
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
         }
 
-        .stats-bar {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .result-header {
             margin-bottom: 2rem;
-            box-shadow: var(--card-shadow);
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: popIn 0.5s ease;
+        }
+
+        .result-header h2 {
+            color: var(--fudan-blue);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .rank-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            margin: 1rem 0;
+            animation: slideIn 0.5s ease;
+        }
+
+        .rank-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .rank-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .result-stats {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 1rem;
         }
 
         .stat-item {
             text-align: center;
-            position: relative;
+            padding: 0.5rem;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
         }
 
         .stat-value {
@@ -238,332 +430,190 @@
             color: var(--fudan-blue);
         }
 
-        .stat-label {
-            font-size: 0.8rem;
+        .stat-value.highlight {
+            color: var(--fudan-red);
+            font-size: 2rem;
+        }
+
+        .achievements-section {
+            margin: 2rem 0;
+        }
+
+        .achievements-section h3 {
+            color: var(--fudan-blue);
+            margin-bottom: 1rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .achievement-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            animation: slideUp 0.5s ease;
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+        }
+
+        .achievement-info {
+            text-align: left;
+        }
+
+        .achievement-name {
+            font-weight: bold;
+            color: var(--fudan-blue);
+            margin-bottom: 0.3rem;
+        }
+
+        .achievement-desc {
+            font-size: 0.9rem;
             color: #666;
         }
 
-        .stat-multiplier {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: #ffd700;
-            color: #000;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            display: none;
-        }
-
-        /* 每日挑战模态框 */
-        .daily-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .streak-counter {
-            font-size: 1.5rem;
-            color: #ff6b6b;
-            margin: 1rem 0;
-        }
-
-        .challenge-rules {
-            text-align: left;
-            margin: 1.5rem 0;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .modal-actions {
+        .result-actions {
+            margin-top: 2rem;
             display: flex;
             gap: 1rem;
             justify-content: center;
         }
 
         .action-btn {
-            padding: 0.8rem 1.5rem;
+            padding: 0.8rem 2rem;
             border: none;
             border-radius: 25px;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: bold;
         }
 
-        .primary-btn {
-            background: var(--fudan-red);
+        .action-btn.primary {
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
             color: white;
         }
 
-        .secondary-btn {
-            background: #eee;
-            color: #333;
+        .action-btn.secondary {
+            background: #f8f9fa;
+            color: var(--fudan-blue);
+            border: 2px solid var(--fudan-blue);
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
 
-        @media (max-width: 768px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .timer-container {
-                display: none;
-            }
-            
-            .modal-actions {
-                flex-direction: column;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
-        .level-select {
-            margin-bottom: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-        }
-
-        .level-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .level-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .level-card:not(.locked):hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        .level-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .level-card h3 {
-            color: var(--fudan-blue);
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-
-        .level-card p {
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .level-progress {
-            margin: 1rem 0;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--fudan-red), #ff6b6b);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-        }
-
-        .progress-text {
-            font-size: 0.8rem;
-            color: #666;
-        }
-
-        .level-btn {
-            background: var(--fudan-red);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            width: 100%;
-            margin-top: 1rem;
-        }
-
-        .level-btn:hover:not(:disabled) {
-            background: #d32f2f;
-            transform: translateY(-2px);
-        }
-
-        .level-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .locked {
-            opacity: 0.7;
-        }
-
-        .locked::before {
-            content: '🔒';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 1.5rem;
-            opacity: 0.5;
-        }
-
-        .level-unlock-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-            animation: slideIn 0.5s ease;
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        .back-to-levels {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--fudan-blue);
-            color: white;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 1000;
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .retry-btn {
+            background: transparent;
+            color: #666;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
             transition: all 0.3s;
         }
 
-        .back-to-levels:hover {
+        .retry-btn:hover {
+            color: var(--fudan-blue);
+            text-decoration: underline;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: linear-gradient(45deg, var(--fudan-blue), var(--fudan-red));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .back-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .back-btn i {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .back-btn {
+                top: 70px;
+                left: 10px;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="dynamic-background"></div>
-    <div class="combo-display" id="comboDisplay">连击 x<span>0</span></div>
-    <div class="combo-popup" id="comboPopup"></div>
-    <div class="timer-container" id="timerBox" style="display: none;">
-        <div>剩余时间：<span id="timer">30</span>秒</div>
-        <div class="timer-progress"><div class="timer-fill" id="timerFill"></div></div>
-    </div>
 
     <nav class="top-navbar">
-        <a href="index.html" class="site-logo">复旦120周年</a>
+        <a href="index.html" class="site-logo">复旦校史问答</a>
         <div class="nav-links">
             <a href="index.html">首页</a>
             <a href="directory.html">内容目录</a>
-            <a href="games.html">趣味游戏</a>
         </div>
     </nav>
 
+    <button onclick="window.location.href='directory.html'" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        返回目录
+    </button>
+
     <div class="container">
-        <div class="level-select" id="levelSelect">
-            <h2 class="section-title">校史问答关卡</h2>
-            <div class="level-grid">
-                <div class="level-card" data-level="1">
-                    <div class="level-icon">📚</div>
-                    <h3>基础校史</h3>
-                    <p>了解复旦的基本历史</p>
-                    <div class="level-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-text">0%</span>
-                    </div>
-                    <button class="level-btn" onclick="selectLevel(1)">开始</button>
+        <div class="start-screen" id="startScreen">
+            <h1>今日挑战</h1>
+            <div class="challenge-info">
+                <div class="challenge-stat">
+                    <span class="stat-value">0</span>
+                    <span class="stat-label">日连胜</span>
                 </div>
-                
-                <div class="level-card locked" data-level="2">
-                    <div class="level-icon">🏛️</div>
-                    <h3>学校事件</h3>
-                    <p>探索复旦重要历史事件</p>
-                    <div class="level-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-text">0%</span>
-                    </div>
-                    <button class="level-btn" onclick="selectLevel(2)" disabled>需要100分解锁</button>
-                </div>
-                
-                <div class="level-card locked" data-level="3">
-                    <div class="level-icon">🏆</div>
-                    <h3>复旦成就</h3>
-                    <p>了解复旦的杰出校友与科研成果</p>
-                    <div class="level-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-text">0%</span>
-                    </div>
-                    <button class="level-btn" onclick="selectLevel(3)" disabled>需要200分解锁</button>
-                </div>
-                
-                <div class="level-card locked" data-level="4">
-                    <div class="level-icon">⭐</div>
-                    <h3>挑战模式</h3>
-                    <p>终极校史挑战</p>
-                    <div class="level-progress">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
-                        </div>
-                        <span class="progress-text">0%</span>
-                    </div>
-                    <button class="level-btn" onclick="selectLevel(4)" disabled>需要300分解锁</button>
-                </div>
+                <button class="start-btn" onclick="startGame()">
+                    <span>开始挑战</span>
+                </button>
             </div>
         </div>
 
@@ -571,8 +621,7 @@
             <div class="stats-bar">
                 <div class="stat-item">
                     <div class="stat-value" id="scoreValue">0</div>
-                    <div class="stat-label">总分</div>
-                    <div class="stat-multiplier" id="scoreMultiplier">x1.0</div>
+                    <div class="stat-label">得分</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-value" id="streakValue">0</div>
@@ -585,7 +634,6 @@
             </div>
 
             <div class="quiz-card" id="questionCard">
-                <div class="question-tag" id="questionType">文字题</div>
                 <div class="question-text" id="questionText">
                     准备开始答题...
                 </div>
@@ -596,76 +644,10 @@
                     <!-- 选项将通过JavaScript动态生成 -->
                 </div>
             </div>
-            <a href="#" class="back-to-levels" onclick="showLevelSelect(); return false;">
-                <i class="fas fa-arrow-left"></i>
-                返回关卡选择
-            </a>
         </div>
     </div>
 
-    <div class="daily-modal" id="dailyModal">
-        <div class="modal-content">
-            <h2>今日挑战</h2>
-            <div class="streak-counter">
-                <span id="streakCount">0</span> 日连胜
-            </div>
-            <div class="challenge-rules">
-                <p>🎯 完成10道随机题目</p>
-                <p>⏱ 每题15秒，总时限60秒</p>
-                <p>🔥 连胜奖励逐日增加</p>
-            </div>
-            <div class="modal-actions">
-                <button class="action-btn primary-btn" onclick="startDailyChallenge()">
-                    开始挑战
-                </button>
-                <button class="action-btn secondary-btn" onclick="closeDailyModal()">
-                    稍后再试
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <script src="js/questions.js"></script>
     <script src="js/quiz-game.js"></script>
-    <script>
-        // 显示关卡选择界面
-        function showLevelSelect() {
-            document.getElementById('levelSelect').style.display = 'block';
-            document.getElementById('quizContainer').style.display = 'none';
-        }
-
-        // 开始关卡
-        function startLevel(levelId) {
-            document.getElementById('levelSelect').style.display = 'none';
-            document.getElementById('quizContainer').style.display = 'block';
-            selectLevel(levelId);
-        }
-
-        // 更新关卡进度显示
-        function updateLevelDisplay() {
-            Object.values(LEVELS).forEach(level => {
-                const card = document.querySelector(`.level-card[data-level="${level.id}"]`);
-                const progress = gameState.levelProgress[level.id] || { score: 0, correctRate: 0 };
-                const progressBar = card.querySelector('.progress-fill');
-                const progressText = card.querySelector('.progress-text');
-                
-                // 更新进度条
-                progressBar.style.width = `${progress.correctRate * 100}%`;
-                progressText.textContent = `${Math.round(progress.correctRate * 100)}%`;
-                
-                // 更新解锁状态
-                if (gameState.unlockedLevels.has(level.id)) {
-                    card.classList.remove('locked');
-                    card.querySelector('.level-btn').disabled = false;
-                    card.querySelector('.level-btn').textContent = '开始';
-                }
-            });
-        }
-
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            loadLevelProgress();
-            updateLevelDisplay();
-        });
-    </script>
 </body>
 </html> 
